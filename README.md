@@ -6,7 +6,7 @@ features is real-time seat availability tracking, which allows members and admin
 information on which seats are occupied or available. This feature optimizes space utilization by enabling users
 to book seats as needed, reducing wait times, and ensuring efficient seat allocation.
 
-         The system is designed to make managing multiple workspaces easier and more efficient. It helps track
+The system is designed to make managing multiple workspaces easier and more efficient. It helps track
 available space in real-time, manages resources effectively, and offers flexible billing options to fit users' 
 needs. The system also encourages networking and collaboration among users across different locations.It
 provides visual reports to help administrators understand how the spaces are used, enabling them to make 
