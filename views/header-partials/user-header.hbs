@@ -1,0 +1,110 @@
+<!-- Preloader -->
+<div id="preloader">
+    <div class="spinner-grow text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+</div>
+<!-- Internet Connection Status -->
+<!-- # This code for showing internet connection status -->
+<div class="internet-connection-status" id="internetStatus"></div>
+<!-- Header Area -->
+<div class="header-area" id="headerArea">
+    <div class="container">
+        <!-- # Paste your Header Content from here -->
+        <!-- # Header Five Layout -->
+        <!-- # Copy the code from here ... -->
+        <!-- Header Content -->
+        <div
+            class="header-content header-style-five position-relative d-flex align-items-center justify-content-between">
+            <!-- Logo Wrapper -->
+            <div class="logo-wrapper"><a href="/">
+                    {{!-- <img src="/assets2/img/core-img/logo.png" alt=""> --}}
+                    <h4 class="mt-2" style="text-transform: uppercase; color:black; font-size:15px;font-weight:600;">
+                        Workspace</h4>
+                </a>
+            </div>
+            <!-- Navbar Toggler -->
+            <div class="navbar--toggler" id="affanNavbarToggler" data-bs-toggle="offcanvas"
+                data-bs-target="#affanOffcanvas" aria-controls="affanOffcanvas"><span class="d-block"></span><span
+                    class="d-block"></span><span class="d-block"></span></div>
+        </div>
+        <!-- # Header Five Layout End -->
+    </div>
+</div>
+<!-- # Sidenav Left -->
+<!-- Offcanvas -->
+<div class="offcanvas offcanvas-start" id="affanOffcanvas" data-bs-scroll="true" tabindex="-1"
+    aria-labelledby="affanOffcanvsLabel">
+    <button class="btn-close btn-close-white text-reset" type="button" data-bs-dismiss="offcanvas"
+        aria-label="Close"></button>
+    <div class="offcanvas-body p-0">
+        <!-- Side Nav Wrapper -->
+        <div class="sidenav-wrapper">
+            <!-- Sidenav Profile -->
+            <div class="sidenav-profile bg-gradient">
+                <div class="sidenav-style1"></div>
+                <!-- User Thumbnail -->
+                <div class="user-profile"><img src="img/bg-img/2.jpg" alt=""></div>
+                <!-- User Info -->
+                {{#if user}}
+                <div class="user-info">
+                    <h6 class="user-name mb-0">Hi, {{user.Fname}} {{user.Lname}}</h6><span>{{user.Email}}</span>
+                </div>
+                {{else}}
+                <div class="user-info">
+                    <h6 class="user-name mb-0">Workspace</h6><span>www.co-workspace.com</span>
+                </div>
+                {{/if}}
+            </div>
+            <!-- Sidenav Nav -->
+
+            <ul class="sidenav-nav ps-0">
+                {{#if user}}
+                <li><a href="/"><i class="bi bi-house-door"></i>Home</a></li>
+                <li><a href="/about"><i class="bi bi-people"></i>About Us</a></li>
+                <li><a href="/services"><i class="bi bi-layers"></i>Our Services</a></li>
+                <li><a href="/contact"><i class="bi bi-telephone"></i>Contact Us</a></li>
+                <li>
+                    <div class="night-mode-nav"><i class="bi bi-moon"></i>Night Mode
+                        <div class="form-check form-switch">
+                            <input class="form-check-input form-check-success" id="darkSwitch" type="checkbox">
+                        </div>
+                    </div>
+                </li>
+                <li><a href="/profile"><i class="bi bi-gear"></i>My Profile</a></li>
+                <li><a href="/signout"><i class="bi bi-box-arrow-right"></i>Logout</a></li>
+                {{!-- <li><a href="#"><i class="bi bi-cart-check"></i>Shop</a>
+                    <ul>
+                        <li><a href="page-shop-grid.html">Shop Grid</a></li>
+                        <li><a href="page-shop-list.html">Shop List</a></li>
+                        <li><a href="page-shop-details.html">Shop Details</a></li>
+                        <li><a href="page-cart.html">Cart</a></li>
+                        <li><a href="page-checkout.html">Checkout</a></li>
+                    </ul>
+                </li> --}}
+
+                {{else}}
+                <li><a href="/"><i class="bi bi-house-door"></i>Home</a></li>
+                <li><a href="/about"><i class="bi bi-people"></i>About Us</a></li>
+                <li><a href="/services"><i class="bi bi-layers"></i>Our Services</a></li>
+                <li><a href="/contact"><i class="bi bi-telephone"></i>Contact Us</a></li>
+                <li>
+                    <div class="night-mode-nav"><i class="bi bi-moon"></i>Night Mode
+                        <div class="form-check form-switch">
+                            <input class="form-check-input form-check-success" id="darkSwitch" type="checkbox">
+                        </div>
+                    </div>
+                </li>
+                <li><a href="/signin"><i class="bi bi-person-circle"></i>Signin/Signup</a></li>
+
+                {{/if}}
+
+            </ul>
+            <!-- Social Info -->
+            {{!-- <div class="social-info-wrap"><a href="#"><i class="bi bi-facebook"></i></a><a href="#"><i
+                        class="bi bi-twitter"></i></a><a href="#"><i class="bi bi-linkedin"></i></a></div>
+            <!-- Copyright Info -->
+            <div class="copyright-info">
+                <p>2021 &copy; Made by<a href="#">Designing World</a></p>
+            </div> --}}
+        </div>
+    </div>
+</div>
