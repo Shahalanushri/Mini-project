@@ -34,11 +34,13 @@
 
 <body>
 
-    {{#if admin}}
-
+    {{#if workspace}}
+    {{>workspace-header}}
+    {{else if admin}}
     {{else}}
     {{>user-header}}
     {{/if}}
+
 
     {{{body}}}
 

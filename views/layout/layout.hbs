@@ -11,7 +11,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
   <!-- Title -->
-  <title>Affan - PWA Mobile HTML Template</title>
+  {{#if workspace}}
+  <title>Workspace</title>
+  {{else}}
+  <title>User</title>
+  {{/if}}
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link
@@ -24,49 +28,60 @@
   <link rel="apple-touch-icon" sizes="167x167" href="img/icons/icon-167x167.png">
   <link rel="apple-touch-icon" sizes="180x180" href="img/icons/icon-180x180.png">
   <!-- CSS Libraries -->
-  <link rel="stylesheet" href="/assets2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/assets2/css/bootstrap-icons.css">
-  <link rel="stylesheet" href="/assets2/css/tiny-slider.css">
-  <link rel="stylesheet" href="/assets2/css/baguetteBox.min.css">
-  <link rel="stylesheet" href="/assets2/css/rangeslider.css">
-  <link rel="stylesheet" href="/assets2/css/vanilla-dataTables.min.css">
-  <link rel="stylesheet" href="/assets2/css/apexcharts.css">
+  <link rel="stylesheet" href="../assets2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets2/css/bootstrap-icons.css">
+  <link rel="stylesheet" href="../assets2/css/tiny-slider.css">
+  <link rel="stylesheet" href="../assets2/css/baguetteBox.min.css">
+  <link rel="stylesheet" href="../assets2/css/rangeslider.css">
+  <link rel="stylesheet" href="../assets2/css/vanilla-dataTables.min.css">
+  <link rel="stylesheet" href="../assets2/css/apexcharts.css">
   <!-- Core Stylesheet -->
-  <link rel="stylesheet" href="/assets2/style.css">
+  <link rel="stylesheet" href="../assets2/style.css">
   <!-- Web App Manifest -->
-  <link rel="manifest" href="/assets2/manifest.json">
+  <link rel="manifest" href="../assets2/manifest.json">
 </head>
 <style>
   .form-control:disabled,
   .form-control[readonly] {
     background-color: #fff;
   }
+
+  .middle-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: center;
+    text-align: center;
+  }
 </style>
 
 <body>
-  {{#if admin}}
+  {{#if workspace}}
+  {{>workspace-header}}
+  {{else if admin}}
   {{>admin-header}}
   {{else}}
   {{>user-header}}
   {{/if}}
 
+
   {{{body}}}
 
   <!-- All JavaScript Files -->
-  <script src="/assets2/js/bootstrap.bundle.min.js"></script>
-  <script src="/assets2/js/slideToggle.min.js"></script>
-  <script src="/assets2/js/internet-status.js"></script>
-  <script src="/assets2/js/tiny-slider.js"></script>
-  <script src="/assets2/js/baguetteBox.min.js"></script>
-  <script src="/assets2/js/countdown.js"></script>
-  <script src="/assets2/js/rangeslider.min.js"></script>
-  <script src="/assets2/js/vanilla-dataTables.min.js"></script>
-  <script src="/assets2/js/index.js"></script>
-  <script src="/assets2/js/magic-grid.min.js"></script>
-  <script src="/assets2/js/dark-rtl.js"></script>
-  <script src="/assets2/js/active.js"></script>
+  <script src="../assets2/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets2/js/slideToggle.min.js"></script>
+  <script src="../assets2/js/internet-status.js"></script>
+  <script src="../assets2/js/tiny-slider.js"></script>
+  <script src="../assets2/js/baguetteBox.min.js"></script>
+  <script src="../assets2/js/countdown.js"></script>
+  <script src="../assets2/js/rangeslider.min.js"></script>
+  <script src="../assets2/js/vanilla-dataTables.min.js"></script>
+  <script src="../assets2/js/index.js"></script>
+  <script src="../assets2/js/magic-grid.min.js"></script>
+  <script src="../assets2/js/dark-rtl.js"></script>
+  <script src="../assets2/js/active.js"></script>
   <!-- PWA -->
-  <script src="/assets2/js/pwa.js"></script>
+  <script src="../assets2/js/pwa.js"></script>
 </body>
 
 </html>

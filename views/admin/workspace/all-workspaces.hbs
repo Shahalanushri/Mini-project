@@ -18,14 +18,12 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">All Workspaces</h5>
-
-
-                        <!-- Table with stripped rows -->
                         <table class="table datatable">
                             <thead>
                                 <tr>
                                     <th>No.</th>
                                     <th data-type="date" data-format="YYYY/DD/MM">Joined Date</th>
+                                    <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
                                     <th>Address</th>
@@ -34,23 +32,45 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{#each users}}
+                                {{#each workspaces}}
                                 <tr>
                                     <td>{{incremented @index}}</td>
-                                    <td>{{this.date}}</td>
+                                    <td>{{this.Date}}</td>
+                                    <td>{{this.Fname}} {{this.Lname}}</td>
                                     <td>{{this.Email}}</td>
                                     <td>{{this.Phone}}</td>
                                     <td>{{this.Address}}</td>
                                     <td>{{this.City}}</td>
-                                    <td><a href="" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a></td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            {{#if this.approved}}
+                                            <span class="badge bg-success p-2">Approved</span>
+                                            {{else if this.rejected}}
+                                            <span class="badge bg-danger p-2">Rejected</span>
+                                            {{else}}
+                                            <form action="/admin/approve-workspace/{{this._id}}" method="POST">
+                                                <button type="submit" class="btn btn-success btn-sm"><i
+                                                        class="bi bi-check2"></i></button>
+                                            </form>
+                                            <form action="/admin/reject-workspace/{{this._id}}" method="POST">
+                                                <button type="submit" class="btn btn-dark btn-sm"><i
+                                                        class="bi bi-ban"></i></button>
+                                            </form>
+                                            {{/if}}
+                                            <form action="/admin/delete-workspace/{{this._id}}" method="POST">
+                                                <button type="submit" class="btn btn-danger btn-sm"><i
+                                                        class="bi bi-trash"></i></button>
+                                            </form>
+                                        </div>
+                                    </td>
+
                                 </tr>
                                 {{/each}}
                             </tbody>
                         </table>
-                        <!-- End Table with stripped rows -->
-
                     </div>
                 </div>
+
 
             </div>
         </div>

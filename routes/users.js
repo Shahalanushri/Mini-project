@@ -23,11 +23,17 @@ router.get("/", async function (req, res, next) {
   });
 });
 
-
+////////////////////PROFILE////////////////////////////////////
 router.get("/profile", async function (req, res, next) {
   let user = req.session.user;
   res.render("users/profile", { admin: false, user });
 });
+
+////////////////////USER TYPE////////////////////////////////////
+router.get("/usertype", async function (req, res, next) {
+  res.render("users/usertype", { admin: false, layout: 'empty' });
+});
+
 
 
 

@@ -1887,10 +1887,11 @@ a.affan-element-item i {
 .setting-popup-card {
   position: fixed !important;
   height: auto;
-  width: calc(100% - 1rem);
+  width: 300px;
   z-index: 10000 !important;
   top: 58px;
-  left: 0.5rem;
+  right: 8px !important;
+  /* left: 100px !important; */
   opacity: 0;
   visibility: hidden;
   transition: transform 0.5s ease-out, -webkit-transform 0.5s ease-out;

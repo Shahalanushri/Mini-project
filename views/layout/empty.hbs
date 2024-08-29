@@ -11,7 +11,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
   <!-- Title -->
-  <title>Affan - PWA Mobile HTML Template</title>
+  {{#if workspace}}
+  <title>Workspace</title>
+  {{else}}
+  <title>User</title>
+  {{/if}}
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link
@@ -36,12 +40,24 @@
   <!-- Web App Manifest -->
   <link rel="manifest" href="/assets2/manifest.json">
 </head>
+<style>
+  .middle-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: center;
+    text-align: center;
+  }
+</style>
 
 <body>
-  {{#if admin}}
+  {{#if workspace}}
+  {{!-- {{>workspace-header}} --}}
+  {{else if admin}}
   {{>admin-header}}
   {{else}}
   {{/if}}
+
 
   {{{body}}}
 

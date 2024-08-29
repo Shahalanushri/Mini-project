@@ -3,6 +3,9 @@ var adminHelper = require("../helper/adminHelper");
 var fs = require("fs");
 const userHelper = require("../helper/userHelper");
 var router = express.Router();
+var db = require("../config/connection");
+var collections = require("../config/collections");
+const ObjectId = require("mongodb").ObjectID;
 
 const verifySignedIn = (req, res, next) => {
   if (req.session.signedInAdmin) {
@@ -27,6 +30,34 @@ router.get("/all-workspaces", verifySignedIn, function (req, res) {
   adminHelper.getAllworkspaces().then((workspaces) => {
     res.render("admin/workspace/all-workspaces", { admin: true, layout: "admin-layout", workspaces, administator });
   });
+});
+
+router.post("/approve-workspace/:id", verifySignedIn, async function (req, res) {
+  await db.get().collection(collections.WORKSPACE_COLLECTION).updateOne(
+    { _id: ObjectId(req.params.id) },
+    { $set: { approved: true } }
+  );
+  res.redirect("/admin/all-workspaces");
+});
+
+router.post("/reject-workspace/:id", function (req, res) {
+  const workspaceId = req.params.id;
+  db.get()
+    .collection(collections.WORKSPACE_COLLECTION)
+    .updateOne({ _id: ObjectId(workspaceId) }, { $set: { approved: false, rejected: true } })
+    .then(() => {
+      res.redirect("/admin/all-workspaces");
+    })
+    .catch((err) => {
+      console.error(err);
+      res.redirect("/admin/all-workspaces");
+    });
+});
+
+
+router.post("/delete-workspace/:id", verifySignedIn, async function (req, res) {
+  await db.get().collection(collections.WORKSPACE_COLLECTION).deleteOne({ _id: ObjectId(req.params.id) });
+  res.redirect("/admin/all-workspaces");
 });
 
 ///////ADD workspace/////////////////////                                         
@@ -73,13 +104,12 @@ router.post("/edit-workspace/:id", verifySignedIn, function (req, res) {
 });
 
 ///////DELETE workspace/////////////////////                                         
-router.get("/delete-workspace/:id", verifySignedIn, function (req, res) {
-  let workspaceId = req.params.id;
-  adminHelper.deleteworkspace(workspaceId).then((response) => {
-    fs.unlinkSync("./public/images/workspace-images/" + workspaceId + ".png");
-    res.redirect("/admin/workspace/all-workspaces");
-  });
-});
+// router.get("/delete-workspace/:id", verifySignedIn, function (req, res) {
+//   let workspaceId = req.params.id;
+//   adminHelper.deleteworkspace(workspaceId).then((response) => {
+//     res.redirect("/admin/all-workspaces");
+//   });
+// });
 
 ///////DELETE ALL workspace/////////////////////                                         
 router.get("/delete-all-workspaces", verifySignedIn, function (req, res) {
