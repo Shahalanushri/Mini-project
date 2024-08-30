@@ -5,5 +5,7 @@ module.exports = {
     CART_COLLECTION: 'cart',
     ORDER_COLLECTION: 'order',
     BUILDER_COLLECTION: "builder",
+    WORKSPACE_COLLECTION: "workspace",
+
 
 }

@@ -53,7 +53,7 @@ app.use("/", usersRouter);
 app.use("/admin", adminRouter);
 app.use("/builder", builderRouter);
 app.use("/admin/users", adminRouter);
-app.use("/admin/workspace", adminRouter);
+app.use("/admin/builder", adminRouter);
 
 
 // catch 404 and forward to error handler

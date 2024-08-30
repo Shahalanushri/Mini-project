@@ -13,6 +13,7 @@
 
                 {{/if}}
                 <form action="/signup" method="POST">
+                    <input type="hidden" name="date" id="datetime">
                     <div class="row g-1">
                         <div class="col-lg-6">
                             <div class="form-group">
@@ -67,3 +68,19 @@
 
     </div>
 </div>
+
+
+<script>
+    // Get current date and time
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const hours = ((now.getHours() + 11) % 12 + 1).toString().padStart(2, '0'); // Convert to 12-hour format
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+
+    // Set default value to current date and time in 12-hour format with AM/PM
+    const defaultDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+    document.getElementById('datetime').value = defaultDateTime;
+</script>

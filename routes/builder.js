@@ -19,78 +19,106 @@ router.get("/", verifySignedIn, function (req, res, next) {
 });
 
 
-///////ALL builder/////////////////////                                         
-// router.get("/all-workspaces", verifySignedIn, function (req, res) {
-//   let builder = req.session.builder;
-//   builderHelper.getAllworkspaces().then((workspaces) => {
-//     res.render("builder/builder/all-workspaces", { builder: true, layout: "layout", workspaces, workspace });
-//   });
-// });
+///////ALL workspace/////////////////////                                         
+router.get("/all-workspaces", verifySignedIn, function (req, res) {
+  let builder = req.session.builder;
+  builderHelper.getAllworkspaces(req.session.builder._id).then((workspaces) => {
+    res.render("builder/all-workspaces", { admin: true, layout: "layout", workspaces, builder });
+  });
+});
 
-///////ADD builder/////////////////////                                         
-// router.get("/add-workspace", verifySignedIn, function (req, res) {
-//   let builder = req.session.builder;
-//   res.render("builder/builder/add-workspace", { builder: true, layout: "layout", workspace });
-// });
+///////ADD workspace/////////////////////                                         
+router.get("/add-workspace", verifySignedIn, function (req, res) {
+  let builder = req.session.builder;
+  res.render("builder/add-workspace", { admin: true, layout: "layout", builder });
+});
 
-///////ADD builder/////////////////////                                         
-// router.post("/add-workspace", function (req, res) {
-//   builderHelper.addworkspace(req.body, (id) => {
-//     let image = req.files.Image;
-//     image.mv("./public/images/builder-images/" + id + ".png", (err, done) => {
-//       if (!err) {
-//         res.redirect("/builder/builder/all-workspaces");
-//       } else {
-//         console.log(err);
-//       }
-//     });
-//   });
-// });
+///////ADD workspace/////////////////////                                         
+router.post("/add-workspace", function (req, res) {
+  // Ensure the builder is signed in and their ID is available
+  if (req.session.signedInBuilder && req.session.builder && req.session.builder._id) {
+    const builderId = req.session.builder._id; // Get the builder's ID from the session
 
-///////EDIT builder/////////////////////                                         
-// router.get("/edit-builder/:id", verifySignedIn, async function (req, res) {
-//   let builder = req.session.builder;
-//   let builderId = req.params.id;
-//   let builders = await builderHelper.getworkspaceDetails(workspaceId);
-//   console.log(workspace);
-//   res.render("builder/builder/edit-workspace", { builder: true, layout: "layout", workspace, workspaces });
-// });
+    // Pass the builderId to the addworkspace function
+    builderHelper.addworkspace(req.body, builderId, (workspaceId, error) => {
+      if (error) {
+        console.log("Error adding workspace:", error);
+        res.status(500).send("Failed to add workspace");
+      } else {
+        let image = req.files.Image;
+        image.mv("./public/images/workspace-images/" + workspaceId + ".png", (err) => {
+          if (!err) {
+            res.redirect("/builder/all-workspaces");
+          } else {
+            console.log("Error saving workspace image:", err);
+            res.status(500).send("Failed to save workspace image");
+          }
+        });
+      }
+    });
+  } else {
+    // If the builder is not signed in, redirect to the sign-in page
+    res.redirect("/builder/signin");
+  }
+});
 
-///////EDIT builder/////////////////////                                         
-// router.post("/edit-builder/:id", verifySignedIn, function (req, res) {
-//   let builderId = req.params.id;
-//   builderHelper.updateworkspace(workspaceId, req.body).then(() => {
-//     if (req.files) {
-//       let image = req.files.Image;
-//       if (image) {
-//         image.mv("./public/images/builder-images/" + workspaceId + ".png");
-//       }
-//     }
-//     res.redirect("/builder/builder/all-workspaces");
-//   });
-// });
 
-///////DELETE builder/////////////////////                                         
-// router.get("/delete-builder/:id", verifySignedIn, function (req, res) {
-//   let builderId = req.params.id;
-//   builderHelper.deleteworkspace(workspaceId).then((response) => {
-//     res.redirect("/builder/builder/all-workspaces");
-//   });
-// });
+///////EDIT workspace/////////////////////                                         
+router.get("/edit-workspace/:id", verifySignedIn, async function (req, res) {
+  let builder = req.session.builder;
+  let workspaceId = req.params.id;
+  let workspace = await builderHelper.getworkspaceDetails(workspaceId);
+  console.log(workspace);
+  res.render("builder/edit-workspace", { admin: true, layout: "layout", workspace, builder });
+});
 
-///////DELETE ALL builder/////////////////////                                         
-// router.get("/delete-all-workspaces", verifySignedIn, function (req, res) {
-//   builderHelper.deleteAllworkspaces().then(() => {
-//     res.redirect("/builder/builder/all-workspaces");
-//   });
-// });
+///////EDIT workspace/////////////////////                                         
+router.post("/edit-workspace/:id", verifySignedIn, function (req, res) {
+  let workspaceId = req.params.id;
+  builderHelper.updateworkspace(workspaceId, req.body).then(() => {
+    if (req.files) {
+      let image = req.files.Image;
+      if (image) {
+        image.mv("./public/images/workspace-images/" + workspaceId + ".png");
+      }
+    }
+    res.redirect("/builder/all-workspaces");
+  });
+});
 
-// router.get("/all-products", verifySignedIn, function (req, res) {
-//   let builder = req.session.builder;
-//   builderHelper.getAllProducts().then((products) => {
-//     res.render("builder/all-products", { builder: true, layout: "layout", products, workspace });
-//   });
-// });
+///////DELETE workspace/////////////////////                                         
+router.get("/delete-workspace/:id", verifySignedIn, function (req, res) {
+  let workspaceId = req.params.id;
+  builderHelper.deleteworkspace(workspaceId).then((response) => {
+    fs.unlinkSync("./public/images/workspace-images/" + workspaceId + ".png");
+    res.redirect("/builder/all-workspaces");
+  });
+});
+
+///////DELETE ALL workspace/////////////////////                                         
+router.get("/delete-all-workspaces", verifySignedIn, function (req, res) {
+  builderHelper.deleteAllworkspaces().then(() => {
+    res.redirect("/builder/all-workspaces");
+  });
+});
+
+
+
+
+
+
+
+
+
+
+router.get("/all-users", verifySignedIn, function (req, res) {
+  let builder = req.session.builder;
+  builderHelper.getAllUsers().then((users) => {
+    res.render("builder/all-users", { builder: true, layout: "layout", users, builder });
+  });
+});
+
+
 
 
 router.get("/signup", function (req, res) {
@@ -152,7 +180,7 @@ router.post("/signin", function (req, res) {
       req.session.signInErr = "This user is rejected by admin.";
       res.redirect("/builder/signin");
     } else {
-      req.session.signInErr = "Invalid Email/Password for registration approval.";
+      req.session.signInErr = `Invalid Email/Password`;
       res.redirect("/builder/signin");
     }
   }).catch((error) => {

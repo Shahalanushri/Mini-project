@@ -24,55 +24,55 @@ router.get("/", verifySignedIn, function (req, res, next) {
 });
 
 
-///////ALL workspace/////////////////////                                         
-router.get("/all-workspaces", verifySignedIn, function (req, res) {
+///////ALL builder/////////////////////                                         
+router.get("/all-builders", verifySignedIn, function (req, res) {
   let administator = req.session.admin;
-  adminHelper.getAllworkspaces().then((workspaces) => {
-    res.render("admin/workspace/all-workspaces", { admin: true, layout: "admin-layout", workspaces, administator });
+  adminHelper.getAllbuilders().then((builders) => {
+    res.render("admin/builder/all-builders", { admin: true, layout: "admin-layout", builders, administator });
   });
 });
 
-router.post("/approve-workspace/:id", verifySignedIn, async function (req, res) {
-  await db.get().collection(collections.WORKSPACE_COLLECTION).updateOne(
+router.post("/approve-builder/:id", verifySignedIn, async function (req, res) {
+  await db.get().collection(collections.BUILDER_COLLECTION).updateOne(
     { _id: ObjectId(req.params.id) },
     { $set: { approved: true } }
   );
-  res.redirect("/admin/all-workspaces");
+  res.redirect("/admin/all-builders");
 });
 
-router.post("/reject-workspace/:id", function (req, res) {
-  const workspaceId = req.params.id;
+router.post("/reject-builder/:id", function (req, res) {
+  const builderId = req.params.id;
   db.get()
-    .collection(collections.WORKSPACE_COLLECTION)
-    .updateOne({ _id: ObjectId(workspaceId) }, { $set: { approved: false, rejected: true } })
+    .collection(collections.BUILDER_COLLECTION)
+    .updateOne({ _id: ObjectId(builderId) }, { $set: { approved: false, rejected: true } })
     .then(() => {
-      res.redirect("/admin/all-workspaces");
+      res.redirect("/admin/all-builders");
     })
     .catch((err) => {
       console.error(err);
-      res.redirect("/admin/all-workspaces");
+      res.redirect("/admin/all-builders");
     });
 });
 
 
-router.post("/delete-workspace/:id", verifySignedIn, async function (req, res) {
-  await db.get().collection(collections.WORKSPACE_COLLECTION).deleteOne({ _id: ObjectId(req.params.id) });
-  res.redirect("/admin/all-workspaces");
+router.post("/delete-builder/:id", verifySignedIn, async function (req, res) {
+  await db.get().collection(collections.BUILDER_COLLECTION).deleteOne({ _id: ObjectId(req.params.id) });
+  res.redirect("/admin/all-builders");
 });
 
-///////ADD workspace/////////////////////                                         
-router.get("/add-workspace", verifySignedIn, function (req, res) {
+///////ADD builder/////////////////////                                         
+router.get("/add-builder", verifySignedIn, function (req, res) {
   let administator = req.session.admin;
-  res.render("admin/workspace/add-workspace", { admin: true, layout: "admin-layout", administator });
+  res.render("admin/builder/add-builder", { admin: true, layout: "admin-layout", administator });
 });
 
-///////ADD workspace/////////////////////                                         
-router.post("/add-workspace", function (req, res) {
-  adminHelper.addworkspace(req.body, (id) => {
+///////ADD builder/////////////////////                                         
+router.post("/add-builder", function (req, res) {
+  adminHelper.addbuilder(req.body, (id) => {
     let image = req.files.Image;
-    image.mv("./public/images/workspace-images/" + id + ".png", (err, done) => {
+    image.mv("./public/images/builder-images/" + id + ".png", (err, done) => {
       if (!err) {
-        res.redirect("/admin/workspace/all-workspaces");
+        res.redirect("/admin/builder/all-builders");
       } else {
         console.log(err);
       }
@@ -80,41 +80,41 @@ router.post("/add-workspace", function (req, res) {
   });
 });
 
-///////EDIT workspace/////////////////////                                         
-router.get("/edit-workspace/:id", verifySignedIn, async function (req, res) {
+///////EDIT builder/////////////////////                                         
+router.get("/edit-builder/:id", verifySignedIn, async function (req, res) {
   let administator = req.session.admin;
-  let workspaceId = req.params.id;
-  let workspace = await adminHelper.getworkspaceDetails(workspaceId);
-  console.log(workspace);
-  res.render("admin/workspace/edit-workspace", { admin: true, layout: "admin-layout", workspace, administator });
+  let builderId = req.params.id;
+  let builder = await adminHelper.getbuilderDetails(builderId);
+  console.log(builder);
+  res.render("admin/builder/edit-builder", { admin: true, layout: "admin-layout", builder, administator });
 });
 
-///////EDIT workspace/////////////////////                                         
-router.post("/edit-workspace/:id", verifySignedIn, function (req, res) {
-  let workspaceId = req.params.id;
-  adminHelper.updateworkspace(workspaceId, req.body).then(() => {
+///////EDIT builder/////////////////////                                         
+router.post("/edit-builder/:id", verifySignedIn, function (req, res) {
+  let builderId = req.params.id;
+  adminHelper.updatebuilder(builderId, req.body).then(() => {
     if (req.files) {
       let image = req.files.Image;
       if (image) {
-        image.mv("./public/images/workspace-images/" + workspaceId + ".png");
+        image.mv("./public/images/builder-images/" + builderId + ".png");
       }
     }
-    res.redirect("/admin/workspace/all-workspaces");
+    res.redirect("/admin/builder/all-builders");
   });
 });
 
-///////DELETE workspace/////////////////////                                         
-// router.get("/delete-workspace/:id", verifySignedIn, function (req, res) {
-//   let workspaceId = req.params.id;
-//   adminHelper.deleteworkspace(workspaceId).then((response) => {
-//     res.redirect("/admin/all-workspaces");
+///////DELETE builder/////////////////////                                         
+// router.get("/delete-builder/:id", verifySignedIn, function (req, res) {
+//   let builderId = req.params.id;
+//   adminHelper.deletebuilder(builderId).then((response) => {
+//     res.redirect("/admin/all-builders");
 //   });
 // });
 
-///////DELETE ALL workspace/////////////////////                                         
-router.get("/delete-all-workspaces", verifySignedIn, function (req, res) {
-  adminHelper.deleteAllworkspaces().then(() => {
-    res.redirect("/admin/workspace/all-workspaces");
+///////DELETE ALL builder/////////////////////                                         
+router.get("/delete-all-builders", verifySignedIn, function (req, res) {
+  adminHelper.deleteAllbuilders().then(() => {
+    res.redirect("/admin/builder/all-builders");
   });
 });
 

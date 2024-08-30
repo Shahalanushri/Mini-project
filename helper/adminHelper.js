@@ -5,38 +5,38 @@ const objectId = require("mongodb").ObjectID;
 
 module.exports = {
 
-  ///////ADD workspace/////////////////////                                         
-  addworkspace: (workspace, callback) => {
-    console.log(workspace);
-    workspace.Price = parseInt(workspace.Price);
+  ///////ADD builder/////////////////////                                         
+  addbuilder: (builder, callback) => {
+    console.log(builder);
+    builder.Price = parseInt(builder.Price);
     db.get()
-      .collection(collections.WORKSPACE_COLLECTION)
-      .insertOne(workspace)
+      .collection(collections.BUILDER_COLLECTION)
+      .insertOne(builder)
       .then((data) => {
         console.log(data);
         callback(data.ops[0]._id);
       });
   },
 
-  ///////GET ALL workspace/////////////////////                                            
-  getAllworkspaces: () => {
+  ///////GET ALL builder/////////////////////                                            
+  getAllbuilders: () => {
     return new Promise(async (resolve, reject) => {
-      let workspaces = await db
+      let builders = await db
         .get()
-        .collection(collections.WORKSPACE_COLLECTION)
+        .collection(collections.BUILDER_COLLECTION)
         .find()
         .toArray();
-      resolve(workspaces);
+      resolve(builders);
     });
   },
 
-  ///////ADD workspace DETAILS/////////////////////                                            
-  getworkspaceDetails: (workspaceId) => {
+  ///////ADD builder DETAILS/////////////////////                                            
+  getbuilderDetails: (builderId) => {
     return new Promise((resolve, reject) => {
       db.get()
-        .collection(collections.WORKSPACE_COLLECTION)
+        .collection(collections.BUILDER_COLLECTION)
         .findOne({
-          _id: objectId(workspaceId)
+          _id: objectId(builderId)
         })
         .then((response) => {
           resolve(response);
@@ -44,13 +44,13 @@ module.exports = {
     });
   },
 
-  ///////DELETE workspace/////////////////////                                            
-  deleteworkspace: (workspaceId) => {
+  ///////DELETE builder/////////////////////                                            
+  deletebuilder: (builderId) => {
     return new Promise((resolve, reject) => {
       db.get()
-        .collection(collections.WORKSPACE_COLLECTION)
+        .collection(collections.BUILDER_COLLECTION)
         .removeOne({
-          _id: objectId(workspaceId)
+          _id: objectId(builderId)
         })
         .then((response) => {
           console.log(response);
@@ -59,21 +59,21 @@ module.exports = {
     });
   },
 
-  ///////UPDATE workspace/////////////////////                                            
-  updateworkspace: (workspaceId, workspaceDetails) => {
+  ///////UPDATE builder/////////////////////                                            
+  updatebuilder: (builderId, builderDetails) => {
     return new Promise((resolve, reject) => {
       db.get()
-        .collection(collections.WORKSPACE_COLLECTION)
+        .collection(collections.BUILDER_COLLECTION)
         .updateOne(
           {
-            _id: objectId(workspaceId)
+            _id: objectId(builderId)
           },
           {
             $set: {
-              Name: workspaceDetails.Name,
-              Category: workspaceDetails.Category,
-              Price: workspaceDetails.Price,
-              Description: workspaceDetails.Description,
+              Name: builderDetails.Name,
+              Category: builderDetails.Category,
+              Price: builderDetails.Price,
+              Description: builderDetails.Description,
             },
           }
         )
@@ -84,11 +84,11 @@ module.exports = {
   },
 
 
-  ///////DELETE ALL workspace/////////////////////                                            
-  deleteAllworkspaces: () => {
+  ///////DELETE ALL builder/////////////////////                                            
+  deleteAllbuilders: () => {
     return new Promise((resolve, reject) => {
       db.get()
-        .collection(collections.WORKSPACE_COLLECTION)
+        .collection(collections.BUILDER_COLLECTION)
         .remove({})
         .then(() => {
           resolve();
