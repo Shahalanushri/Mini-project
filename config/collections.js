@@ -4,6 +4,6 @@ module.exports = {
     ADMIN_COLLECTION: 'admin',
     CART_COLLECTION: 'cart',
     ORDER_COLLECTION: 'order',
-    WORKSPACE_COLLECTION: "workspace",
+    BUILDER_COLLECTION: "builder",
 
 }

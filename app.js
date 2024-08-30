@@ -6,7 +6,7 @@ var logger = require("morgan");
 var hbs = require("express-handlebars");
 var usersRouter = require("./routes/users");
 var adminRouter = require("./routes/admin");
-var workspaceRouter = require("./routes/workspace");
+var builderRouter = require("./routes/builder");
 var fileUpload = require("express-fileupload");
 var db = require("./config/connection");
 var session = require("express-session");
@@ -51,7 +51,7 @@ db.connect((err) => {
 });
 app.use("/", usersRouter);
 app.use("/admin", adminRouter);
-app.use("/workspace", workspaceRouter);
+app.use("/builder", builderRouter);
 app.use("/admin/users", adminRouter);
 app.use("/admin/workspace", adminRouter);
 

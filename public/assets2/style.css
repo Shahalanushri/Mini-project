@@ -70,6 +70,9 @@ Created: December 10, 2020
 # [font-family]
 "Poppins", sans-serif;
 ----------------------- */
+
+@import url('https://fonts.cdnfonts.com/css/beatrice-display-trial?styles=157324,157328,157320,157322,157326,157316,157318');
+
 /* :: Preloader CSS */
 #preloader {
   background-color: #f1f2fb;
@@ -97,7 +100,7 @@ a {
 }
 
 kbd {
-  background-color: #061238;
+  background-color: #000000;
 }
 
 caption {
@@ -607,8 +610,8 @@ caption {
 
 .btn-dark {
   color: #ffffff;
-  background-color: #061238;
-  border-color: #061238;
+  background-color: #000000;
+  border-color: #000000;
 }
 
 .btn-dark:hover {
@@ -637,8 +640,8 @@ caption {
 .btn-dark:disabled,
 .btn-dark.disabled {
   color: #ffffff;
-  background-color: #061238;
-  border-color: #061238;
+  background-color: #000000;
+  border-color: #000000;
 }
 
 .btn-outline-primary {
@@ -824,14 +827,14 @@ caption {
 }
 
 .btn-outline-dark {
-  color: #061238;
-  border-color: #061238;
+  color: #000000;
+  border-color: #000000;
 }
 
 .btn-outline-dark:hover {
   color: #ffffff;
-  background-color: #061238;
-  border-color: #061238;
+  background-color: #000000;
+  border-color: #000000;
 }
 
 .btn-check:checked + .btn-outline-dark,
@@ -840,13 +843,13 @@ caption {
 .btn-outline-dark.active,
 .btn-outline-dark.dropdown-toggle.show {
   color: #ffffff;
-  background-color: #061238;
-  border-color: #061238;
+  background-color: #000000;
+  border-color: #000000;
 }
 
 .btn-outline-dark:disabled,
 .btn-outline-dark.disabled {
-  color: #061238;
+  color: #000000;
 }
 
 .btn-link {
@@ -1096,7 +1099,7 @@ caption {
 }
 
 .link-dark {
-  color: #061238;
+  color: #000000;
 }
 
 .link-dark:hover,
@@ -1153,7 +1156,7 @@ caption {
 }
 
 .border-dark {
-  border-color: #061238 !important;
+  border-color: #000000 !important;
 }
 
 .text-primary {
@@ -1185,7 +1188,7 @@ caption {
 }
 
 .text-dark {
-  color: #061238 !important;
+  color: #000000 !important;
 }
 
 .text-body {
@@ -1225,7 +1228,7 @@ caption {
 }
 
 .bg-dark {
-  background-color: #061238 !important;
+  background-color: #000000 !important;
 }
 
 .form-control:disabled,
@@ -1270,7 +1273,7 @@ caption {
 
 body,
 html {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Beatrice Trial', sans-serif;
   overflow-x: hidden;
   background-color: #e2e9fe;
   color: #8480ae;
@@ -1574,7 +1577,7 @@ textarea:invalid {
 .bg-overlay::after {
   position: absolute;
   content: '';
-  background-color: #061238;
+  background-color: #000000;
   opacity: 0.75;
   top: 0;
   left: 0;
@@ -1869,7 +1872,7 @@ a.affan-element-item i {
 #setting-popup-overlay {
   position: fixed !important;
   z-index: 100 !important;
-  background-color: #061238;
+  background-color: #000000;
   top: 0;
   left: 0;
   width: 100%;
@@ -2905,22 +2908,22 @@ form .btn.btn-sm {
   box-shadow: none;
 }
 .btn-creative.btn-primary::after {
-  background-color: #061238;
+  background-color: #000000;
 }
 .btn-creative.btn-secondary::after {
   background-color: #1f0757;
 }
 .btn-creative.btn-success::after {
-  background-color: #061238;
+  background-color: #000000;
 }
 .btn-creative.btn-danger::after {
-  background-color: #061238;
+  background-color: #000000;
 }
 .btn-creative.btn-warning::after {
   background-color: #f1f2fb;
 }
 .btn-creative.btn-info::after {
-  background-color: #061238;
+  background-color: #000000;
 }
 .btn-creative.btn-light::after {
   background-color: #f1b10f;
@@ -3523,7 +3526,7 @@ form .btn.btn-sm {
   background-color: transparent;
 }
 .custom-alert-1.alert-dark::after {
-  background-color: #061238;
+  background-color: #000000;
 }
 
 .custom-alert-2 {
@@ -3574,7 +3577,7 @@ form .btn.btn-sm {
   background-color: #ffffff;
 }
 .custom-alert-2.alert-dark {
-  background-color: #061238;
+  background-color: #000000;
 }
 
 .custom-alert-3 {
@@ -3677,7 +3680,7 @@ form .btn.btn-sm {
   line-height: 30px;
 }
 .divider.divider-center-icon.border-dark i {
-  background-color: #061238;
+  background-color: #000000;
 }
 .divider.divider-center-icon.border-white i {
   background-color: #ffffff;
@@ -5025,8 +5028,8 @@ form .btn.btn-sm {
 }
 
 .form-check-input.form-check-dark:checked {
-  background-color: #061238;
-  border-color: #061238;
+  background-color: #000000;
+  border-color: #000000;
 }
 
 .form-check-input-lg {
@@ -5642,10 +5645,10 @@ input[type='color'].form-control:valid {
   background-color: #f1f2fb;
 }
 .circle-spinner.circle-spinner-dark .circle {
-  background-color: #061238;
+  background-color: #000000;
 }
 .circle-spinner.circle-spinner-dark .circle::after {
-  background-color: #061238;
+  background-color: #000000;
 }
 
 /* :: Modal CSS */
@@ -6678,15 +6681,15 @@ input[type='color'].form-control:valid {
   background-color: #1787b8;
 }
 .timeline-card.bg-dark {
-  border-left-color: #061238 !important;
+  border-left-color: #000000 !important;
   background-color: #ffffff !important;
 }
 .timeline-card.bg-dark .timeline-icon svg,
 .timeline-card.bg-dark .timeline-icon i {
-  color: #061238;
+  color: #000000;
 }
 .timeline-card.bg-dark .timeline-text .badge {
-  background-color: #061238;
+  background-color: #000000;
 }
 .timeline-card.bg-secondary {
   border-left-color: #8480ae !important;
@@ -6764,7 +6767,7 @@ input[type='color'].form-control:valid {
 }
 
 .toast-dark {
-  background-color: #061238 !important;
+  background-color: #000000 !important;
   color: #ffffff;
 }
 
