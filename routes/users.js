@@ -23,6 +23,12 @@ router.get("/", async function (req, res, next) {
   });
 });
 
+
+router.get("/about",async function (req,res)
+{
+  res.render("users/about", { admin: false, });
+})
+
 ////////////////////PROFILE////////////////////////////////////
 router.get("/profile", async function (req, res, next) {
   let user = req.session.user;
