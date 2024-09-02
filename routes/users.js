@@ -35,6 +35,14 @@ router.get("/contact",async function (req,res)
   res.render("users/contact", { admin: false, });
 })
 
+router.get("/service",async function (req,res)
+{
+  res.render("users/service", { admin: false, });
+})
+
+
+
+
 ////////////////////PROFILE////////////////////////////////////
 router.get("/profile", async function (req, res, next) {
   let user = req.session.user;
