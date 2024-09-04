@@ -1,3 +1,9 @@
+<style>
+    .text-danger {
+        font-size: 11px;
+        margin-top: 5px;
+    }
+</style>
 <!-- Login Wrapper Area -->
 <div class="login-wrapper d-flex  align-items-center justify-content-center">
     <div class="custom-container">
@@ -16,59 +22,67 @@
                 {{/if}}
                 <form action="/builder/signup" method="POST">
                     <input type="hidden" name="date" id="datetime">
-                    <div class="row g-1">
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <input class="form-control" type="text" name="Fname" placeholder="Your First Name">
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <input class="form-control" type="text" name="Lname" placeholder="Your Last Name">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <input class="form-control" type="email" name="Email" placeholder="Your Email">
-                    </div>
-                    <div class="form-group">
-                        <input class="form-control" type="number" name="Phone" placeholder="Your Phone Number">
-                    </div>
-                    <div class="form-group">
-                        <textarea class="form-control" name="Address" placeholder="Your Address"></textarea>
-                    </div>
-                    <div class="row g-1">
-                        <div class="col-lg-7">
-                            <div class="form-group">
-                                <input class="form-control" type="text" name="City" placeholder="Your City Name">
-                            </div>
-                        </div>
-                        <div class="col-lg-5">
-                            <div class="form-group">
-                                <input class="form-control" type="number" name="Pincode" placeholder="Your Pincode">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group position-relative">
-                        <input class="form-control" id="psw-input" name="Password" type="password"
-                            placeholder="Enter Password">
-                        <div class="position-absolute" id="password-visibility"><i class="bi bi-eye"></i><i
-                                class="bi bi-eye-slash"></i></div>
-                    </div>
-                    <button class="btn btn-dark w-100" type="submit">Signup</button>
-                </form>
-            </div>
-            <!-- Login Meta -->
-            <div class="login-meta-data text-center">
-                {{!-- <a class="stretched-link forgot-password d-block mt-3 mb-1"
-                    href="page-forget-password.html">Forgot Password?</a> --}}
-                <p class="mb-0 mt-3" style="font-size: ;">Already have an account? <a class="stretched-link"
-                        href="/builder/signin">Signin Now</a>
-                </p>
-            </div>
-        </div>
 
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="Companyname" value="{{Companyname}}"
+                            placeholder="Your Company Name">
+                        {{#if errors.Companyname}}<div class="text-danger">{{errors.Companyname}}</div>{{/if}}
+                    </div>
+            </div>
+
+            <div class="form-group">
+                <input class="form-control" type="email" name="Email" value="{{Email}}" placeholder="Your Email">
+                {{#if errors.email}}<div class="text-danger">{{errors.email}}</div>{{/if}}
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="number" name="Phone" value="{{Phone}}"
+                    placeholder="Your Phone Number">
+                {{#if errors.phone}}<div class="text-danger">{{errors.phone}}</div>{{/if}}
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" name="Address" placeholder="Your Address">{{Address}}</textarea>
+                {{#if errors.address}}<div class="text-danger">{{errors.address}}</div>{{/if}}
+            </div>
+            <div class="row g-1">
+                <div class="col-lg-7">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="City" value="{{City}}"
+                            placeholder="Your City Name">
+                        {{#if errors.city}}<div class="text-danger">{{errors.city}}</div>{{/if}}
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="form-group">
+                        <input class="form-control" type="number" name="Pincode" value="{{Pincode}}"
+                            placeholder="Your Pincode">
+                        {{#if errors.pincode}}<div class="text-danger">{{errors.pincode}}</div>{{/if}}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group position-relative">
+                <input class="form-control" id="psw-input" name="Password" value="{{Password}}" type="password"
+                    placeholder="Enter Password">
+                {{#if errors.password}}<div class="text-danger">{{errors.password}}</div>{{/if}}
+                <div class="position-absolute" id="password-visibility">
+                    <i class="bi bi-eye"></i><i class="bi bi-eye-slash"></i>
+                </div>
+            </div>
+            <button class="btn btn-dark w-100" type="submit">Signup</button>
+            </form>
+
+
+        </div>
+        <!-- Login Meta -->
+        <div class="login-meta-data text-center">
+            {{!-- <a class="stretched-link forgot-password d-block mt-3 mb-1" href="page-forget-password.html">Forgot
+                Password?</a> --}}
+            <p class="mb-0 mt-3" style="font-size: ;">Already have an account? <a class="stretched-link"
+                    href="/builder/signin">Signin Now</a>
+            </p>
+        </div>
     </div>
+
+</div>
 </div>
 
 

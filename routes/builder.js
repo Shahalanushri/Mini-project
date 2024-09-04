@@ -3,6 +3,10 @@ var builderHelper = require("../helper/builderHelper");
 var fs = require("fs");
 const userHelper = require("../helper/userHelper");
 var router = express.Router();
+var db = require("../config/connection");
+var collections = require("../config/collections");
+const ObjectId = require("mongodb").ObjectID;
+
 
 const verifySignedIn = (req, res, next) => {
   if (req.session.signedInBuilder) {
@@ -103,14 +107,6 @@ router.get("/delete-all-workspaces", verifySignedIn, function (req, res) {
 });
 
 
-
-
-
-
-
-
-
-
 router.get("/all-users", verifySignedIn, function (req, res) {
   let builder = req.session.builder;
   builderHelper.getAllUsers().then((users) => {
@@ -118,7 +114,15 @@ router.get("/all-users", verifySignedIn, function (req, res) {
   });
 });
 
-
+router.get("/pending-approval", function (req, res) {
+  if (!req.session.signedInBuilder || req.session.builder.approved) {
+    res.redirect("/builder");
+  } else {
+    res.render("builder/pending-approval", {
+      builder: true, layout: "empty",
+    });
+  }
+});
 
 
 router.get("/signup", function (req, res) {
@@ -132,17 +136,65 @@ router.get("/signup", function (req, res) {
   }
 });
 
-router.get("/pending-approval", function (req, res) {
-  if (!req.session.signedInBuilder || req.session.builder.approved) {
-    res.redirect("/builder");
+router.post("/signup", async function (req, res) {
+  const { Companyname, Email, Phone, Address, City, Pincode, Password } = req.body;
+  let errors = {};
+
+  if (!Companyname) errors.Companyname = "Please enter your company name.";
+  if (!Email) errors.email = "Please enter your email.";
+  if (!Phone) errors.phone = "Please enter your phone number.";
+  if (!Address) errors.address = "Please enter your address.";
+  if (!City) errors.city = "Please enter your city.";
+  if (!Pincode) errors.pincode = "Please enter your pincode.";
+  if (!Password) errors.password = "Please enter a password.";
+
+  // Check if email already exists
+  const existingEmail = await db.get()
+    .collection(collections.BUILDER_COLLECTION)
+    .findOne({ Email });
+
+  if (existingEmail) {
+    errors.email = "This email is already registered.";
+  }
+
+  const existingCompanyname = await db.get()
+    .collection(collections.BUILDER_COLLECTION)
+    .findOne({ Companyname });
+
+  if (existingCompanyname) {
+    errors.Companyname = "This company name is already registered.";
+  }
+
+  // Validate phone number length and uniqueness
+  if (!Phone) {
+    errors.phone = "Please enter your phone number.";
+  } else if (!/^\d{10}$/.test(Phone)) {
+    errors.phone = "Phone number must be exactly 10 digits.";
   } else {
-    res.render("builder/pending-approval", {
-      builder: true, layout: "empty",
+    const existingPhone = await db.get()
+      .collection(collections.BUILDER_COLLECTION)
+      .findOne({ Phone });
+
+    if (existingPhone) {
+      errors.phone = "This phone number is already registered.";
+    }
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return res.render("builder/signup", {
+      builder: true,
+      layout: 'empty',
+      errors,
+      Companyname,
+      Email,
+      Phone,
+      Address,
+      City,
+      Pincode,
+      Password
     });
   }
-});
 
-router.post("/signup", function (req, res) {
   builderHelper.dosignup(req.body).then((response) => {
     if (!response) {
       req.session.signUpErr = "Invalid Admin Code";
@@ -154,6 +206,7 @@ router.post("/signup", function (req, res) {
     }
   });
 });
+
 
 router.get("/signin", function (req, res) {
   if (req.session.signedInBuilder) {
@@ -168,26 +221,36 @@ router.get("/signin", function (req, res) {
 });
 
 router.post("/signin", function (req, res) {
-  builderHelper.doSignin(req.body).then((response) => {
-    if (response.status === true) {
-      req.session.signedInBuilder = true;
-      req.session.builder = response.builder;
-      res.redirect("/builder");
-    } else if (response.status === "pending") {
-      req.session.signInErr = "This user is not approved by admin, please wait.";
+  const { Email, Password } = req.body;
+
+  // Validate Email and Password
+  if (!Email || !Password) {
+    req.session.signInErr = "Please fill all fields.";
+    return res.redirect("/builder/signin");
+  }
+
+  builderHelper.doSignin(req.body)
+    .then((response) => {
+      if (response.status === true) {
+        req.session.signedInBuilder = true;
+        req.session.builder = response.builder;
+        res.redirect("/builder");
+      } else if (response.status === "pending") {
+        req.session.signInErr = "This user is not approved by admin, please wait.";
+        res.redirect("/builder/signin");
+      } else if (response.status === "rejected") {
+        req.session.signInErr = "This user is rejected by admin.";
+        res.redirect("/builder/signin");
+      } else {
+        req.session.signInErr = "Invalid Email/Password";
+        res.redirect("/builder/signin");
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      req.session.signInErr = "An error occurred. Please try again.";
       res.redirect("/builder/signin");
-    } else if (response.status === "rejected") {
-      req.session.signInErr = "This user is rejected by admin.";
-      res.redirect("/builder/signin");
-    } else {
-      req.session.signInErr = `Invalid Email/Password`;
-      res.redirect("/builder/signin");
-    }
-  }).catch((error) => {
-    console.error(error);
-    req.session.signInErr = "An error occurred. Please try again.";
-    res.redirect("/builder/signin");
-  });
+    });
 });
 
 

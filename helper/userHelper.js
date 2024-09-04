@@ -59,171 +59,47 @@ module.exports = {
     });
   },
 
-  addToCart: (productId, userId) => {
-    console.log(userId);
-    let productObject = {
-      item: objectId(productId),
-      quantity: 1,
-    };
-    return new Promise(async (resolve, reject) => {
-      let userCart = await db
-        .get()
-        .collection(collections.CART_COLLECTION)
-        .findOne({ user: objectId(userId) });
-      if (userCart) {
-        let productExist = userCart.products.findIndex(
-          (products) => products.item == productId
-        );
-        console.log(productExist);
-        if (productExist != -1) {
-          db.get()
-            .collection(collections.CART_COLLECTION)
-            .updateOne(
-              { user: objectId(userId), "products.item": objectId(productId) },
-              {
-                $inc: { "products.$.quantity": 1 },
-              }
-            )
-            .then(() => {
-              resolve();
-            });
-        } else {
-          db.get()
-            .collection(collections.CART_COLLECTION)
-            .updateOne(
-              { user: objectId(userId) },
-              {
-                $push: { products: productObject },
-              }
-            )
-            .then((response) => {
-              resolve();
-            });
-        }
-      } else {
-        let cartObject = {
-          user: objectId(userId),
-          products: [productObject],
-        };
-        db.get()
-          .collection(collections.CART_COLLECTION)
-          .insertOne(cartObject)
-          .then((response) => {
-            resolve();
-          });
-      }
-    });
-  },
-
-  getCartProducts: (userId) => {
-    return new Promise(async (resolve, reject) => {
-      let cartItems = await db
-        .get()
-        .collection(collections.CART_COLLECTION)
-        .aggregate([
-          {
-            $match: { user: objectId(userId) },
-          },
-          {
-            $unwind: "$products",
-          },
-          {
-            $project: {
-              item: "$products.item",
-              quantity: "$products.quantity",
-            },
-          },
-          {
-            $lookup: {
-              from: collections.PRODUCTS_COLLECTION,
-              localField: "item",
-              foreignField: "_id",
-              as: "product",
-            },
-          },
-          {
-            $project: {
-              item: 1,
-              quantity: 1,
-              product: { $arrayElemAt: ["$product", 0] },
-            },
-          },
-        ])
-        .toArray();
-      // console.log(cartItems);
-      resolve(cartItems);
-    });
-  },
-
-  getCartCount: (userId) => {
-    return new Promise(async (resolve, reject) => {
-      let count = 0;
-      let cart = await db
-        .get()
-        .collection(collections.CART_COLLECTION)
-        .findOne({ user: objectId(userId) });
-      if (cart) {
-        var sumQuantity = 0;
-        for (let i = 0; i < cart.products.length; i++) {
-          sumQuantity += cart.products[i].quantity;
-        }
-        count = sumQuantity;
-      }
-      resolve(count);
-    });
-  },
-
-  changeProductQuantity: (details) => {
-    details.count = parseInt(details.count);
-    details.quantity = parseInt(details.quantity);
-
-    return new Promise((resolve, reject) => {
-      if (details.count == -1 && details.quantity == 1) {
-        db.get()
-          .collection(collections.CART_COLLECTION)
-          .updateOne(
-            { _id: objectId(details.cart) },
-            {
-              $pull: { products: { item: objectId(details.product) } },
-            }
-          )
-          .then((response) => {
-            resolve({ removeProduct: true });
-          });
-      } else {
-        db.get()
-          .collection(collections.CART_COLLECTION)
-          .updateOne(
-            {
-              _id: objectId(details.cart),
-              "products.item": objectId(details.product),
-            },
-            {
-              $inc: { "products.$.quantity": details.count },
-            }
-          )
-          .then((response) => {
-            resolve({ status: true });
-          });
-      }
-    });
-  },
-
-  removeCartProduct: (details) => {
+  getUserDetails: (userId) => {
     return new Promise((resolve, reject) => {
       db.get()
-        .collection(collections.CART_COLLECTION)
-        .updateOne(
-          { _id: objectId(details.cart) },
-          {
-            $pull: { products: { item: objectId(details.product) } },
-          }
-        )
-        .then(() => {
-          resolve({ status: true });
+        .collection(collections.USERS_COLLECTION)
+        .findOne({ _id: objectId(userId) })
+        .then((user) => {
+          resolve(user);
+        })
+        .catch((err) => {
+          reject(err);
         });
     });
   },
+
+  updateUserProfile: (userId, userDetails) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.USERS_COLLECTION)
+        .updateOne(
+          { _id: objectId(userId) },
+          {
+            $set: {
+              Fname: userDetails.Fname,
+              Lname: userDetails.Lname,
+              Email: userDetails.Email,
+              Phone: userDetails.Phone,
+              Address: userDetails.Address,
+              City: userDetails.City,
+              Pincode: userDetails.Pincode,
+            },
+          }
+        )
+        .then((response) => {
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
+
 
   getTotalAmount: (userId) => {
     return new Promise(async (resolve, reject) => {
@@ -383,8 +259,8 @@ module.exports = {
 
       hmac.update(
         details["payment[razorpay_order_id]"] +
-          "|" +
-          details["payment[razorpay_payment_id]"]
+        "|" +
+        details["payment[razorpay_payment_id]"]
       );
       hmac = hmac.digest("hex");
 
@@ -430,7 +306,7 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       db.get()
         .collection(collections.PRODUCTS_COLLECTION)
-        .createIndex({ Name : "text" }).then(async()=>{
+        .createIndex({ Name: "text" }).then(async () => {
           let result = await db
             .get()
             .collection(collections.PRODUCTS_COLLECTION)

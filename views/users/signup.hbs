@@ -1,3 +1,10 @@
+<style>
+    .text-danger {
+        font-size: 11px;
+        margin-top: 5px;
+    }
+</style>
+
 <!-- Login Wrapper Area -->
 <div class="login-wrapper d-flex  align-items-center justify-content-center">
     <div class="custom-container">
@@ -7,7 +14,7 @@
         <div class="card shadow p-4">
 
             <div class="register-form mt-4">
-                <h6 class="mb-4 text-center">Hey User, Welcome<br> To Workspace</h6>
+                <h6 class="mb-4 text-center">Hey User, Welcome<br> To CoSpace</h6>
                 {{#if signInErr}}
 
                 <p class="text-danger text-center ">{{signInErr}}</p>
@@ -18,44 +25,62 @@
                     <div class="row g-1">
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <input class="form-control" type="text" name="Fname" placeholder="Your First Name">
+                                <input class="form-control" type="text" name="Fname" value="{{Fname}}"
+                                    placeholder="Your First Name">
+                                {{#if errors.fname}}<div class="text-danger">{{errors.fname}}</div>{{/if}}
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <input class="form-control" type="text" name="Lname" placeholder="Your Last Name">
+                                <input class="form-control" type="text" name="Lname" value="{{Lname}}"
+                                    placeholder="Your Last Name">
+                                {{#if errors.lname}}<div class="text-danger">{{errors.lname}}</div>{{/if}}
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <input class="form-control" type="email" name="Email" placeholder="Your Email">
+                        <input class="form-control" type="email" name="Email" value="{{Email}}"
+                            placeholder="Your Email">
+                        {{#if errors.email}}<div class="text-danger">{{errors.email}}</div>{{/if}}
                     </div>
                     <div class="form-group">
-                        <input class="form-control" type="number" name="Phone" placeholder="Your Phone Number">
+                        <input class="form-control" type="number" name="Phone" value="{{Phone}}"
+                            placeholder="Your Phone Number">
+                        {{#if errors.phone}}<div class="text-danger">{{errors.phone}}</div>{{/if}}
                     </div>
                     <div class="form-group">
-                        <textarea class="form-control" name="Address" placeholder="Your Address"></textarea>
+                        <textarea class="form-control" name="Address" placeholder="Your Address">{{Address}}</textarea>
+                        {{#if errors.address}}<div class="text-danger">{{errors.address}}</div>{{/if}}
                     </div>
                     <div class="row g-1">
                         <div class="col-lg-7">
                             <div class="form-group">
-                                <input class="form-control" type="text" name="City" placeholder="Your City Name">
+                                <input class="form-control" type="text" name="City" value="{{City}}"
+                                    placeholder="Your City Name">
+                                {{#if errors.city}}<div class="text-danger">{{errors.city}}</div>{{/if}}
                             </div>
                         </div>
                         <div class="col-lg-5">
                             <div class="form-group">
-                                <input class="form-control" type="number" name="Pincode" placeholder="Your Pincode">
+                                <input class="form-control" type="number" name="Pincode" value="{{Pincode}}"
+                                    placeholder="Your Pincode">
+                                {{#if errors.pincode}}<div class="text-danger">{{errors.pincode}}</div>{{/if}}
                             </div>
                         </div>
                     </div>
                     <div class="form-group position-relative">
-                        <input class="form-control" id="psw-input" name="Password" type="password"
+                        <input class="form-control" id="psw-input" name="Password" value="{{Password}}" type="password"
                             placeholder="Enter Password">
-                        <div class="position-absolute" id="password-visibility"><i class="bi bi-eye"></i><i
-                                class="bi bi-eye-slash"></i></div>
+                        {{#if errors.password}}<div class="text-danger">{{errors.password}}</div>{{/if}}
+                        <div class="position-absolute" id="password-visibility">
+                            <i class="bi bi-eye"></i><i class="bi bi-eye-slash"></i>
+                        </div>
                     </div>
+                    <div id="password-strength"></div>
+
                     <button class="btn btn-dark w-100" type="submit">Signup</button>
                 </form>
+
             </div>
             <!-- Login Meta -->
             <div class="login-meta-data text-center">
@@ -85,3 +110,20 @@
     const defaultDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
     document.getElementById('datetime').value = defaultDateTime;
 </script>
+
+{{!--
+<script>
+    document.getElementById('psw-input').addEventListener('input', function () {
+        const password = this.value;
+        const strengthIndicator = document.getElementById('password-strength');
+        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        if (strongPasswordRegex.test(password)) {
+            strengthIndicator.textContent = "Strong password";
+            strengthIndicator.style.color = "green";
+        } else {
+            strengthIndicator.textContent = "Weak password";
+            strengthIndicator.style.color = "red";
+        }
+    });
+</script> --}}

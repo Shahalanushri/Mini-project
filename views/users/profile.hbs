@@ -3,8 +3,16 @@
     <div class="container-lg">
         <div class="text-center px-4"><img class="login-intro-img" src="assets/img/bg-img/36.png" alt=""></div>
         <!-- Register Form -->
-        <a href="/" class="btn btn-sm btn-dark">
-            <i class="bi bi-arrow-left-short "></i> Back</a>
+
+        <div class="d-flex justify-content-between">
+            <a href="/" class="btn btn-sm btn-dark">
+                <i class="bi bi-arrow-left-short "></i> Back</a>
+            {{#if user}}
+            <a href="/edit-profile/{{user._id}}" class="btn btn-sm btn-primary">
+                <i class="bi bi-pen "></i> Edit Profile</a>
+            {{/if}}
+        </div>
+
         <div class="card shadow p-4 mt-3">
 
             <div class="register-form mt-4">

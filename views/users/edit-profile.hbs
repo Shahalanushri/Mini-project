@@ -1,0 +1,65 @@
+<!-- Login Wrapper Area -->
+<div class="login-wrapper d-flex  align-items-center justify-content-center">
+    <div class="container-lg">
+        <div class="text-center px-4"><img class="login-intro-img" src="assets/img/bg-img/36.png" alt=""></div>
+        <!-- Register Form -->
+
+        <div class="">
+            <a href="/profile" class="btn btn-sm btn-dark">
+                <i class="bi bi-arrow-left-short "></i> Back</a>
+        </div>
+
+        <div class="card shadow p-4 mt-3">
+
+            <div class="register-form mt-4">
+                <h4 class="mb-5 text-left">Edit Your Profile</h4>
+                <form action="/edit-profile/{{userProfile._id}}" method="POST" enctype="multipart/form-data">
+                    <div class="row g-1">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <input class="form-control" type="text" id="Fname" name="Fname"
+                                    value="{{userProfile.Fname}}" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <input class="form-control" type="text" id="Lname" name="Lname"
+                                    value="{{userProfile.Lname}}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" type="email" id="Email" name="Email" value="{{userProfile.Email}}"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" type="number" id="Phone" name="Phone" value="{{userProfile.Phone}}"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" id="Address" name="Address"
+                            required>{{userProfile.Address}} </textarea>
+                    </div>
+                    <div class="row g-1">
+                        <div class="col-lg-7">
+                            <div class="form-group">
+                                <input class="form-control" type="text" id="City" name="City"
+                                    value="{{userProfile.City}}" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="form-group">
+                                <input class="form-control" type="number" id="Pincode" name="Pincode"
+                                    value="{{userProfile.Pincode}}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn w-100 btn-sm btn-primary">
+                        Update Profile</button>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+</div>

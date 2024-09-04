@@ -1,6 +1,9 @@
 var express = require("express");
 var userHelper = require("../helper/userHelper");
 var router = express.Router();
+var db = require("../config/connection");
+var collections = require("../config/collections");
+const ObjectId = require("mongodb").ObjectID;
 
 const verifySignedIn = (req, res, next) => {
   if (req.session.signedIn) {
@@ -13,30 +16,22 @@ const verifySignedIn = (req, res, next) => {
 /* GET home page. */
 router.get("/", async function (req, res, next) {
   let user = req.session.user;
-  let cartCount = null;
-  if (user) {
-    let userId = req.session.user._id;
-    cartCount = await userHelper.getCartCount(userId);
-  }
   userHelper.getAllProducts().then((products) => {
-    res.render("users/home", { admin: false, products, user, cartCount });
+    res.render("users/home", { admin: false, products, user });
   });
 });
 
 
-router.get("/about",async function (req,res)
-{
+router.get("/about", async function (req, res) {
   res.render("users/about", { admin: false, });
 })
 
 
-router.get("/contact",async function (req,res)
-{
+router.get("/contact", async function (req, res) {
   res.render("users/contact", { admin: false, });
 })
 
-router.get("/service",async function (req,res)
-{
+router.get("/service", async function (req, res) {
   res.render("users/service", { admin: false, });
 })
 
@@ -66,13 +61,78 @@ router.get("/signup", function (req, res) {
   }
 });
 
-router.post("/signup", function (req, res) {
+router.post("/signup", async function (req, res) {
+  const { Fname, Lname, Email, Phone, Address, City, Pincode, Password } = req.body;
+  let errors = {};
+
+  // Check if email already exists
+  const existingEmail = await db.get()
+    .collection(collections.USERS_COLLECTION)
+    .findOne({ Email });
+
+  if (existingEmail) {
+    errors.email = "This email is already registered.";
+  }
+
+  // Validate phone number length and uniqueness
+  if (!Phone) {
+    errors.phone = "Please enter your phone number.";
+  } else if (!/^\d{10}$/.test(Phone)) {
+    errors.phone = "Phone number must be exactly 10 digits.";
+  } else {
+    const existingPhone = await db.get()
+      .collection(collections.USERS_COLLECTION)
+      .findOne({ Phone });
+
+    if (existingPhone) {
+      errors.phone = "This phone number is already registered.";
+    }
+  }
+
+  if (!Fname) errors.fname = "Please enter your first name.";
+  if (!Lname) errors.lname = "Please enter your last name.";
+  if (!Email) errors.email = "Please enter your email.";
+  if (!Address) errors.address = "Please enter your address.";
+  if (!City) errors.city = "Please enter your city.";
+  if (!Pincode) errors.pincode = "Please enter your pincode.";
+
+  // Password validation
+  if (!Password) {
+    errors.password = "Please enter a password.";
+  } else {
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
+    if (!strongPasswordRegex.test(Password)) {
+      errors.password = "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.";
+    }
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return res.render("users/signup", {
+      admin: false,
+      layout: 'empty',
+      errors,
+      Fname,
+      Lname,
+      Email,
+      Phone,
+      Address,
+      City,
+      Pincode,
+      Password
+    });
+  }
+
+  // Proceed with signup
   userHelper.doSignup(req.body).then((response) => {
     req.session.signedIn = true;
     req.session.user = response;
     res.redirect("/");
+  }).catch((err) => {
+    console.error("Signup error:", err);
+    res.status(500).send("An error occurred during signup.");
   });
 });
+
 
 router.get("/signin", function (req, res) {
   if (req.session.signedIn) {
@@ -87,7 +147,22 @@ router.get("/signin", function (req, res) {
   }
 });
 
+
 router.post("/signin", function (req, res) {
+  const { Email, Password } = req.body;
+
+  if (!Email || !Password) {
+    req.session.signInErr = "Please fill in all fields.";
+    return res.render("users/signin", {
+      admin: false,
+      layout: 'empty',
+      signInErr: req.session.signInErr,
+      email: Email,
+      password: Password,
+
+    });
+  }
+
   userHelper.doSignin(req.body).then((response) => {
     if (response.status) {
       req.session.signedIn = true;
@@ -95,10 +170,17 @@ router.post("/signin", function (req, res) {
       res.redirect("/");
     } else {
       req.session.signInErr = "Invalid Email/Password";
-      res.redirect("/signin");
+      res.render("users/signin", {
+        admin: false,
+        layout: 'empty',
+        signInErr: req.session.signInErr,
+        email: Email
+      });
     }
   });
 });
+
+
 
 router.get("/signout", function (req, res) {
   req.session.signedIn = false;
@@ -106,32 +188,36 @@ router.get("/signout", function (req, res) {
   res.redirect("/");
 });
 
-router.get("/cart", verifySignedIn, async function (req, res) {
+router.get("/edit-profile/:id", verifySignedIn, async function (req, res) {
   let user = req.session.user;
   let userId = req.session.user._id;
-  let cartCount = await userHelper.getCartCount(userId);
-  let cartProducts = await userHelper.getCartProducts(userId);
-  let total = null;
-  if (cartCount != 0) {
-    total = await userHelper.getTotalAmount(userId);
-  }
-  res.render("users/cart", {
-    admin: false,
-    user,
-    cartCount,
-    cartProducts,
-    total,
-  });
+  let userProfile = await userHelper.getUserDetails(userId);
+  res.render("users/edit-profile", { admin: false, userProfile, user });
 });
 
-router.get("/add-to-cart/:id", function (req, res) {
-  console.log("api call");
-  let productId = req.params.id;
-  let userId = req.session.user._id;
-  userHelper.addToCart(productId, userId).then(() => {
-    res.json({ status: true });
-  });
+router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
+  try {
+    let userId = req.params.id;
+
+    // Update the user profile
+    await userHelper.updateUserProfile(userId, req.body);
+
+    // Fetch the updated user profile
+    let updatedUserProfile = await userHelper.getUserDetails(userId);
+
+    // Update the session with the new profile data
+    req.session.user = updatedUserProfile;
+
+    // Redirect to the profile page
+    res.redirect("/profile");
+  } catch (err) {
+    console.error("Profile update error:", err);
+    res.status(500).send("An error occurred while updating the profile.");
+  }
 });
+
+
+
 
 router.post("/change-product-quantity", function (req, res) {
   console.log(req.body);
@@ -149,9 +235,9 @@ router.post("/remove-cart-product", (req, res, next) => {
 router.get("/place-order", verifySignedIn, async (req, res) => {
   let user = req.session.user;
   let userId = req.session.user._id;
-  let cartCount = await userHelper.getCartCount(userId);
+  // le = await userHelper.g(userId);
   let total = await userHelper.getTotalAmount(userId);
-  res.render("users/place-order", { admin: false, user, cartCount, total });
+  res.render("users/place-order", { admin: false, user, total });
 });
 
 router.post("/place-order", async (req, res) => {
@@ -188,16 +274,16 @@ router.post("/verify-payment", async (req, res) => {
 router.get("/order-placed", verifySignedIn, async (req, res) => {
   let user = req.session.user;
   let userId = req.session.user._id;
-  let cartCount = await userHelper.getCartCount(userId);
-  res.render("users/order-placed", { admin: false, user, cartCount });
+  // le = await userHelper.g(userId);
+  res.render("users/order-placed", { admin: false, user });
 });
 
 router.get("/orders", verifySignedIn, async function (req, res) {
   let user = req.session.user;
   let userId = req.session.user._id;
-  let cartCount = await userHelper.getCartCount(userId);
+  // le = await userHelper.g(userId);
   let orders = await userHelper.getUserOrder(userId);
-  res.render("users/orders", { admin: false, user, cartCount, orders });
+  res.render("users/orders", { admin: false, user, orders });
 });
 
 router.get(
@@ -206,13 +292,12 @@ router.get(
   async function (req, res) {
     let user = req.session.user;
     let userId = req.session.user._id;
-    let cartCount = await userHelper.getCartCount(userId);
+    // le = await userHelper.g(userId);
     let orderId = req.params.id;
     let products = await userHelper.getOrderProducts(orderId);
     res.render("users/order-products", {
       admin: false,
       user,
-      cartCount,
       products,
     });
   }
@@ -228,9 +313,9 @@ router.get("/cancel-order/:id", verifySignedIn, function (req, res) {
 router.post("/search", verifySignedIn, async function (req, res) {
   let user = req.session.user;
   let userId = req.session.user._id;
-  let cartCount = await userHelper.getCartCount(userId);
+  // le = await userHelper.g(userId);
   userHelper.searchProduct(req.body).then((response) => {
-    res.render("users/search-result", { admin: false, user, cartCount, response });
+    res.render("users/search-result", { admin: false, user, response });
   });
 });
 
