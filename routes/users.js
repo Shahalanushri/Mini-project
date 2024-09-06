@@ -75,6 +75,7 @@ router.post("/signup", async function (req, res) {
   }
 
   // Validate phone number length and uniqueness
+
   if (!Phone) {
     errors.phone = "Please enter your phone number.";
   } else if (!/^\d{10}$/.test(Phone)) {
@@ -88,13 +89,18 @@ router.post("/signup", async function (req, res) {
       errors.phone = "This phone number is already registered.";
     }
   }
+  // Validate Pincode
+  if (!Pincode) {
+    errors.pincode = "Please enter your pincode.";
+  } else if (!/^\d{6}$/.test(Pincode)) {
+    errors.pincode = "Pincode must be exactly 6 digits.";
+  }
 
   if (!Fname) errors.fname = "Please enter your first name.";
   if (!Lname) errors.lname = "Please enter your last name.";
   if (!Email) errors.email = "Please enter your email.";
   if (!Address) errors.address = "Please enter your address.";
   if (!City) errors.city = "Please enter your city.";
-  if (!Pincode) errors.pincode = "Please enter your pincode.";
 
   // Password validation
   if (!Password) {
@@ -197,15 +203,70 @@ router.get("/edit-profile/:id", verifySignedIn, async function (req, res) {
 
 router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
   try {
-    let userId = req.params.id;
+    const { Fname, Lname, Email, Phone, Address, City, Pincode } = req.body;
+    let errors = {};
+
+    // Validate first name
+    if (!Fname || Fname.trim().length === 0) {
+      errors.fname = 'Please enter your first name.';
+    }
+
+    // Validate last name
+    if (!Lname || Lname.trim().length === 0) {
+      errors.lname = 'Please enter your last name.';
+    }
+
+    // Validate email format
+    if (!Email || !/^\S+@\S+\.\S+$/.test(Email)) {
+      errors.email = 'Please enter a valid email address.';
+    }
+
+    // Validate phone number
+    if (!Phone) {
+      errors.phone = "Please enter your phone number.";
+    } else if (!/^\d{10}$/.test(Phone)) {
+      errors.phone = "Phone number must be exactly 10 digits.";
+    }
+
+
+    // Validate pincode
+    if (!Pincode) {
+      errors.pincode = "Please enter your pincode.";
+    } else if (!/^\d{6}$/.test(Pincode)) {
+      errors.pincode = "Pincode must be exactly 6 digits.";
+    }
+
+    if (!Fname) errors.fname = "Please enter your first name.";
+    if (!Lname) errors.lname = "Please enter your last name.";
+    if (!Email) errors.email = "Please enter your email.";
+    if (!Address) errors.address = "Please enter your address.";
+    if (!City) errors.city = "Please enter your city.";
+
+    // Validate other fields as needed...
+
+    // If there are validation errors, re-render the form with error messages
+    if (Object.keys(errors).length > 0) {
+      let userProfile = await userHelper.getUserDetails(req.params.id);
+      return res.render("users/edit-profile", {
+        admin: false,
+        userProfile,
+        user: req.session.user,
+        errors,
+        Fname,
+        Lname,
+        Email,
+        Phone,
+        Address,
+        City,
+        Pincode,
+      });
+    }
 
     // Update the user profile
-    await userHelper.updateUserProfile(userId, req.body);
+    await userHelper.updateUserProfile(req.params.id, req.body);
 
-    // Fetch the updated user profile
-    let updatedUserProfile = await userHelper.getUserDetails(userId);
-
-    // Update the session with the new profile data
+    // Fetch the updated user profile and update the session
+    let updatedUserProfile = await userHelper.getUserDetails(req.params.id);
     req.session.user = updatedUserProfile;
 
     // Redirect to the profile page
@@ -215,7 +276,6 @@ router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
     res.status(500).send("An error occurred while updating the profile.");
   }
 });
-
 
 
 
