@@ -157,14 +157,15 @@
         <!-- Sidenav Profile -->
         <div class="sidenav-profile bg-dark">
             <div class="sidenav-style1"></div>
-            <!-- User Thumbnail -->
-            <div class="user-profile mt-5"><img src="/images/icons/user.png" alt=""></div>
-            <!-- User Info -->
             {{#if builder}}
+
+            <!-- User Thumbnail -->
+            <div class="user-profile mt-5"><img src="/images/builder-images/{{builder._id}}.png" alt=""></div>
+            <!-- User Info -->
             <div class="user-info">
-                <h6 class="user-name mb-0">Hi, {{builder.Fname}} {{builder.Lname}}</h6>
-                <span>{{builder.Email}}</span>
+                <h6 class="user-name mb-0">Hi, {{builder.Companyname}}</h6>
             </div>
+            <a href="/builder/profile" class="btn btn-sm btn-info mt-3">Edit Profile</a>
             {{else}}
             <div class="user-info">
                 <h6 class="user-name mb-0">CoSpace</h6><span>www.co-workspace.com</span>

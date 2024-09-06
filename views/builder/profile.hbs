@@ -1,56 +1,58 @@
 <!-- Login Wrapper Area -->
-<div class="login-wrapper d-flex  align-items-center justify-content-center">
+<div class="  page-content-wrapper main-content">
     <div class="container-lg">
         <div class="text-center px-4"><img class="login-intro-img" src="assets/img/bg-img/36.png" alt=""></div>
         <!-- Register Form -->
-        <a href="/" class="btn btn-sm btn-dark">
-            <i class="bi bi-arrow-left-short "></i> Back</a>
+
+        <div class="d-flex justify-content-between">
+            <a href="/" class="btn btn-sm btn-dark">
+                <i class="bi bi-arrow-left-short "></i> Back</a>
+            {{#if builder}}
+            <a href="/edit-profile/{{builder._id}}" class="btn btn-sm btn-primary">
+                <i class="bi bi-pen "></i> Edit Profile</a>
+            {{/if}}
+        </div>
+
         <div class="card shadow p-4 mt-3">
 
             <div class="register-form mt-4">
                 <h4 class="mb-5 text-left">My Profile</h4>
-                {{#if user}}
+                {{#if builder}}
                 <form action="#!" method="">
-                    <div class="row g-1">
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <input class="form-control" type="text" name="Fname" value={{user.Fname}} readonly>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <input class="form-control" type="text" name="Lname" value={{user.Lname}} readonly>
-                            </div>
-                        </div>
-                    </div>
+                    <img src="/images/builder-images/{{builder._id}}.png" width="10%" style="border-radius: 100px;"
+                        class="mb-4">
                     <div class="form-group">
-                        <input class="form-control" type="email" name="Email" value={{user.Email}} readonly>
+                        <input class="form-control" type="text" name="Companyname" value={{builder.Companyname}}
+                            readonly>
                     </div>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="email" name="Email" value={{builder.Email}} readonly>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="number" name="Phone" value={{builder.Phone}} readonly>
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" name="Address" readonly>{{builder.Address}} </textarea>
+            </div>
+            <div class="row g-1">
+                <div class="col-lg-7">
                     <div class="form-group">
-                        <input class="form-control" type="number" name="Phone" value={{user.Phone}} readonly>
+                        <input class="form-control" type="text" name="City" value={{builder.City}} readonly>
                     </div>
+                </div>
+                <div class="col-lg-5">
                     <div class="form-group">
-                        <textarea class="form-control" name="Address" readonly>{{user.Address}} </textarea>
+                        <input class="form-control" type="number" name="Pincode" value={{builder.Pincode}} readonly>
                     </div>
-                    <div class="row g-1">
-                        <div class="col-lg-7">
-                            <div class="form-group">
-                                <input class="form-control" type="text" name="City" value={{user.City}} readonly>
-                            </div>
-                        </div>
-                        <div class="col-lg-5">
-                            <div class="form-group">
-                                <input class="form-control" type="number" name="Pincode" value={{user.Pincode}}
-                                    readonly>
-                            </div>
-                        </div>
-                    </div>
-
-                </form>
-                {{/if}}
+                </div>
             </div>
 
+            </form>
+            {{/if}}
         </div>
 
     </div>
+
+</div>
 </div>
