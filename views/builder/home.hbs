@@ -1,7 +1,7 @@
 <div class="page-content-wrapper main-content">
     <!-- Welcome Toast -->
-    <div class="toast toast-autohide custom-toast-1 toast-success home-page-toast" role="alert" aria-live="assertive"
-        aria-atomic="true" data-bs-delay="7000" data-bs-autohide="true">
+    {{!-- <div class="toast toast-autohide custom-toast-1 toast-success home-page-toast" role="alert"
+        aria-live="assertive" aria-atomic="true" data-bs-delay="7000" data-bs-autohide="true">
         <div class="toast-body">
             <svg class="bi bi-bookmark-check text-white" width="30" height="30" viewBox="0 0 16 16" fill="currentColor"
                 xmlns="http://www.w3.org/2000/svg">
@@ -31,7 +31,7 @@
         </div>
         <button class="btn btn-close btn-close-white position-absolute p-1" type="button" data-bs-dismiss="toast"
             aria-label="Close"></button>
-    </div>
+    </div> --}}
     <!-- Tiny Slider One Wrapper -->
     {{!-- <div class="tiny-slider-one-wrapper">
         <div class="tiny-slider-one">
@@ -99,38 +99,76 @@
     </div> --}}
     <div class="pt-3"></div>
     <div class="container-lg direction-rtl">
+        <h5 class="mb-3"> Welcome To Builder Dashboard</h5>
         <div class="card mb-3">
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-4">
-                        <div class="feature-card mx-auto text-center">
-                            <div class="card mx-auto bg-gray"><img src="img/demo-img/pwa.png" alt=""></div>
-                            <p class="mb-0">PWA Ready</p>
-                        </div>
+                        <a href="/builder/all-users">
+                            <div class="feature-card mx-auto text-center">
+                                <div class="card mx-auto bg-gray">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                                <p class="mb-0">Manage Users</p>
+                            </div>
+                        </a>
                     </div>
                     <div class="col-4">
-                        <div class="feature-card mx-auto text-center">
-                            <div class="card mx-auto bg-gray"><img src="img/demo-img/bootstrap.png" alt=""></div>
-                            <p class="mb-0">Bootstrap 5</p>
-                        </div>
+                        <a href="/builder/all-workspaces">
+                            <div class="feature-card mx-auto text-center">
+                                <div class="card mx-auto bg-gray">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="blue"
+                                        class="bi bi-pc-display" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 1a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1zm1 13.5a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0m2 0a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0M9.5 1a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM9 3.5a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 0-1h-5a.5.5 0 0 0-.5.5M1.5 2A1.5 1.5 0 0 0 0 3.5v7A1.5 1.5 0 0 0 1.5 12H6v2h-.5a.5.5 0 0 0 0 1H7v-4H1.5a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .5-.5H7V2z" />
+                                    </svg>
+                                </div>
+                                <p class="mb-0">Manage Workspace</p>
+                            </div>
+                        </a>
                     </div>
                     <div class="col-4">
-                        <div class="feature-card mx-auto text-center">
-                            <div class="card mx-auto bg-gray"><img src="img/demo-img/js.png" alt=""></div>
-                            <p class="mb-0">Vanilla JS</p>
-                        </div>
+                        <a href="#!">
+                            <div class="feature-card mx-auto text-center">
+                                <div class="card mx-auto bg-gray"><i class="bi bi-wallet2 text-primary"></i></div>
+                                <p class="mb-0">Manage Transactions</p>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="container-lg">
-        <div class="card card-bg-img bg-img bg-overlay mb-3" style="background-image: url('img/bg-img/3.jpg')">
-            <div class="card-body direction-rtl p-5">
-                <h2 class="text-white">Reusable elements</h2>
-                <p class="mb-4 text-white">More than 220+ reusable modern design elements. Just copy the code and paste
-                    it on
-                    your desired page.</p><a class="btn btn-warning" href="elements.html">All elements</a>
+        <div class="card">
+            <div class="card-body">
+                <h6 class="mb-4">Users</h6>
+                <table class="w-100" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th data-type="date" data-format="YYYY/DD/MM">Joined Date</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>City</th>
+                            <th>Manage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each users}}
+                        <tr>
+                            <td>{{incremented @index}}</td>
+                            <td>{{this.date}}</td>
+                            <td>{{this.Email}}</td>
+                            <td>{{this.Phone}}</td>
+                            <td>{{this.Address}}</td>
+                            <td>{{this.City}}</td>
+                            <td><a href="" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a></td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
