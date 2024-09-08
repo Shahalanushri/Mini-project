@@ -10,6 +10,46 @@ var instance = new Razorpay({
 });
 
 module.exports = {
+
+
+  ///////GET ALL workspace/////////////////////     
+
+  getAllworkspaces: () => {
+    return new Promise(async (resolve, reject) => {
+      let workspaces = await db
+        .get()
+        .collection(collections.WORKSPACE_COLLECTION)
+        .find()
+        .toArray();
+      resolve(workspaces);
+    });
+  },
+
+  // getAllworkspaces: (builderId) => {
+  //   return new Promise(async (resolve, reject) => {
+  //     let workspaces = await db
+  //       .get()
+  //       .collection(collections.WORKSPACE_COLLECTION)
+  //       .find({ builderId: objectId(builderId) }) // Filter by builderId
+  //       .toArray();
+  //     resolve(workspaces);
+  //   });
+  // },
+
+  /////// workspace DETAILS/////////////////////                                            
+  getworkspaceDetails: (workspaceId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.WORKSPACE_COLLECTION)
+        .findOne({
+          _id: objectId(workspaceId)
+        })
+        .then((response) => {
+          resolve(response);
+        });
+    });
+  },
+
   getAllProducts: () => {
     return new Promise(async (resolve, reject) => {
       let products = await db

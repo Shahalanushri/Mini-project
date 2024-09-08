@@ -16,8 +16,8 @@ const verifySignedIn = (req, res, next) => {
 /* GET home page. */
 router.get("/", async function (req, res, next) {
   let user = req.session.user;
-  userHelper.getAllProducts().then((products) => {
-    res.render("users/home", { admin: false, products, user });
+  userHelper.getAllworkspaces().then((workspaces) => {
+    res.render("users/home", { admin: false, workspaces, user });
   });
 });
 
