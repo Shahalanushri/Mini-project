@@ -2042,7 +2042,7 @@ form .btn.btn-sm {
   transition-duration: 500ms;
   background-color: #ffffff;
   width: 100%;
-  height: 50px;
+  height: 70px !important;
   position: fixed;
   top: 0;
   left: 0;
@@ -2053,7 +2053,7 @@ form .btn.btn-sm {
 
 .header-content {
   z-index: 1;
-  height: 50px;
+  height: 70px;
 }
 .header-content .back-button a {
   display: block;

@@ -13,24 +13,74 @@
         <div
             class="header-content header-style-five position-relative d-flex align-items-center justify-content-between">
             <!-- Logo Wrapper -->
-            <div class="logo-wrapper"><a href="/">
-                    <img src="/images/img/logoblk.png" class="mt-3 mb-3" style="max-width: 250%;     max-height: 40px;"
+            <div class="logo-wrapper">
+                <a href="/">
+                    <img src="/images/img/logoblk.png" class="mt-3 mb-3" style="max-width: 250%; max-height: 40px;"
                         alt="">
-                    {{!-- <h4 class="mt-2"
-                        style="text-transform: uppercase; color:black; font-size:17px;font-weight:600;">
-                        COSPACE<span style="color: crimson;"></h4> --}}
-
-
                 </a>
             </div>
-            <!-- Navbar Toggler -->
-            <div class="navbar--toggler" id="affanNavbarToggler" data-bs-toggle="offcanvas"
-                data-bs-target="#affanOffcanvas" aria-controls="affanOffcanvas"><span class="d-block"></span><span
-                    class="d-block"></span><span class="d-block"></span></div>
+
+            <!-- Centered Navigation Links -->
+            <ul class="d-none d-md-flex gap-4 nav-ul mx-auto">
+                <li class="nav-links">
+                    <a href="/">Home</a>
+                </li>
+                <li class="nav-links">
+                    <a href="/about">About Us</a>
+                </li>
+                <li class="nav-links">
+                    <a href="/service">Our Services</a>
+                </li>
+                <li class="nav-links">
+                    <a href="/contact">Contact Us</a>
+                </li>
+            </ul>
+
+            <!-- Login and Signup Buttons with Navbar Toggler -->
+            <div class="d-flex align-items-center gap-2">
+                <a href="/usertype" class="btn btn2 btn-sm btn-dark d-none d-md-inline-block">Login</a>
+                <a href="/usertype" class="btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">Signup</a>
+                <div class="navbar--toggler" id="affanNavbarToggler" data-bs-toggle="offcanvas"
+                    data-bs-target="#affanOffcanvas" aria-controls="affanOffcanvas">
+                    <span class="d-block"></span>
+                    <span class="d-block"></span>
+                    <span class="d-block"></span>
+                </div>
+            </div>
         </div>
-        <!-- # Header Five Layout End -->
     </div>
 </div>
+
+<style>
+    .nav-ul {
+        margin-right: auto;
+        /* Align nav links to center */
+    }
+
+    @media only screen and (max-width: 600px) {
+        .nav-ul {
+            display: none;
+        }
+    }
+
+
+
+    .nav-links a {
+        font-size: 12px;
+        color: black;
+    }
+
+    .btn2 {
+        padding: 10px 30px;
+    }
+
+    .header-content.header-style-five .navbar--toggler {
+        border: 0px solid #ebebeb;
+        padding: 5px;
+        border-radius: 4px;
+    }
+</style>
+
 <!-- # Sidenav Left -->
 <!-- Offcanvas -->
 <div class="offcanvas offcanvas-start" id="affanOffcanvas" data-bs-scroll="true" tabindex="-1"
@@ -60,10 +110,10 @@
 
             <ul class="sidenav-nav ps-0">
                 {{#if user}}
-                <li><a href="/"><i class="bi bi-house-door"></i>Home</a></li>
+                {{!-- <li><a href="/"><i class="bi bi-house-door"></i>Home</a></li>
                 <li><a href="/about"><i class="bi bi-people"></i>About Us</a></li>
                 <li><a href="/service"><i class="bi bi-layers"></i>Our Services</a></li>
-                <li><a href="/contact"><i class="bi bi-telephone"></i>Contact Us</a></li>
+                <li><a href="/contact"><i class="bi bi-telephone"></i>Contact Us</a></li> --}}
                 <li>
                     <div class="night-mode-nav"><i class="bi bi-moon"></i>Night Mode
                         <div class="form-check form-switch">
@@ -84,10 +134,10 @@
                 </li> --}}
 
                 {{else}}
-                <li><a href="/"><i class="bi bi-house-door"></i>Home</a></li>
+                {{!-- <li><a href="/"><i class="bi bi-house-door"></i>Home</a></li>
                 <li><a href="/about"><i class="bi bi-people"></i>About Us</a></li>
                 <li><a href="/service"><i class="bi bi-layers"></i>Our Services</a></li>
-                <li><a href="/contact"><i class="bi bi-telephone"></i>Contact Us</a></li>
+                <li><a href="/contact"><i class="bi bi-telephone"></i>Contact Us</a></li> --}}
                 <li>
                     <div class="night-mode-nav"><i class="bi bi-moon"></i>Night Mode
                         <div class="form-check form-switch">
