@@ -62,7 +62,7 @@ router.get("/signup", function (req, res) {
 });
 
 router.post("/signup", async function (req, res) {
-  const { Fname, Lname, Email, Phone, Address, City, Pincode, Password } = req.body;
+  const { Fname, Lname, Email, Phone, Address, Pincode, Password } = req.body;
   let errors = {};
 
   // Check if email already exists
@@ -100,7 +100,6 @@ router.post("/signup", async function (req, res) {
   if (!Lname) errors.lname = "Please enter your last name.";
   if (!Email) errors.email = "Please enter your email.";
   if (!Address) errors.address = "Please enter your address.";
-  if (!City) errors.city = "Please enter your city.";
 
   // Password validation
   if (!Password) {
@@ -122,7 +121,6 @@ router.post("/signup", async function (req, res) {
       Email,
       Phone,
       Address,
-      City,
       Pincode,
       Password
     });

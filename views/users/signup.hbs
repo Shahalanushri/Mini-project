@@ -52,22 +52,30 @@
                         <textarea class="form-control" name="Address" placeholder="Your Address">{{Address}}</textarea>
                         {{#if errors.address}}<div class="text-danger">{{errors.address}}</div>{{/if}}
                     </div>
+
+                    <div class="form-group d-flex">
+                        <input class="form-control me-2" type="number" id="text" name="Pincode" value="{{Pincode}}"
+                            placeholder="Your Pincode" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                        <button class="btn btn-primary" type="button" id="submit">Check</button>
+                        {{#if errors.pincode}}<div class="text-danger">{{errors.pincode}}</div>{{/if}}
+                    </div>
+
                     <div class="row g-1">
-                        <div class="col-lg-7">
-                            <div class="form-group">
-                                <input class="form-control" type="text" name="City" value="{{City}}"
-                                    placeholder="Your City Name" pattern="[A-Za-z]+" title="Only letters are allowed">
-                                {{#if errors.city}}<div class="text-danger">{{errors.city}}</div>{{/if}}
-                            </div>
+                        <div class="col-lg-6">
+                            <input class="form-control" type="text" name="District" id="district" value="{{District}}"
+                                placeholder="Your District Name" pattern="[A-Za-z]+" title="Only letters are allowed"
+                                readonly>
                         </div>
-                        <div class="col-lg-5">
+
+                        <div class="col-lg-6">
                             <div class="form-group">
-                                <input class="form-control" type="number" name="Pincode" value="{{Pincode}}"
-                                    placeholder="Your Pincode">
-                                {{#if errors.pincode}}<div class="text-danger">{{errors.pincode}}</div>{{/if}}
+                                <input class="form-control" type="text" id="state" name="State" value="{{State}}"
+                                    placeholder="Your State Name" pattern="[A-Za-z]+" title="Only letters are allowed"
+                                    readonly>
                             </div>
                         </div>
                     </div>
+
                     <div class="form-group position-relative">
                         <input class="form-control" id="psw-input" name="Password" value="{{Password}}" type="password"
                             placeholder="Enter Password">
@@ -76,7 +84,6 @@
                             <i class="bi bi-eye"></i><i class="bi bi-eye-slash"></i>
                         </div>
                     </div>
-                    <div id="password-strength"></div>
 
                     <button class="btn btn-dark w-100" type="submit">Signup</button>
                 </form>
@@ -85,7 +92,8 @@
             <!-- Login Meta -->
             <div class="login-meta-data text-center">
                 {{!-- <a class="stretched-link forgot-password d-block mt-3 mb-1"
-                    href="page-forget-password.html">Forgot Password?</a> --}}
+                    href="page-forget-password.html">Forgot
+                    Password?</a> --}}
                 <p class="mb-0 mt-3" style="font-size: ;">Already have an account? <a class="stretched-link"
                         href="/signin">Signin Now</a>
                 </p>
@@ -95,6 +103,55 @@
     </div>
 </div>
 
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function (event) {
+        function searchPin() {
+            let pin = document.getElementById("text").value;
+            $.getJSON("https://api.postalpincode.in/pincode/" + pin, function (data) {
+                createHTML(data);
+            });
+
+            function createHTML(data) {
+                var htmlElements = " ";
+                var msg = "";
+
+                // Check if PostOffice array exists and has items
+                if (data[0].PostOffice && data[0].PostOffice.length) {
+                    // Limit to the first item in the PostOffice array
+                    var postOffice = data[0].PostOffice[0];
+
+                    // Set District and State input fields
+                    document.getElementById("district").value = postOffice.District || ''; // Update District field
+                    document.getElementById("state").value = postOffice.State || ''; // Update State field
+
+                    // Create HTML for the first PostOffice item
+                    htmlElements += '<div class="col-sm-4"><div class="card"><div class="list-group"><h4>' + postOffice.District + '</h4><p>PostOffice :<span class="pull-right">' + postOffice.State + '</span></p></div></div></div>';
+                } else {
+                    alert('Enter Valid pincode');
+                }
+
+                // Update the HTML content
+                var htmlView = document.getElementById("mkslider");
+                htmlView.innerHTML = htmlElements;
+                var msgView = document.getElementById("total-msg");
+                msgView.innerHTML = msg;
+            }
+
+            setTimeout(function () {
+                $('#close').trigger('click');
+            }, 3000);
+        }
+
+        $(document).on("click", '#close', function () {
+            $('#total-msg').remove();
+        });
+
+        document.getElementById("submit").addEventListener("click", searchPin);
+    });
+
+</script>
 
 <script>
     // Get current date and time
@@ -110,20 +167,3 @@
     const defaultDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
     document.getElementById('datetime').value = defaultDateTime;
 </script>
-
-{{!--
-<script>
-    document.getElementById('psw-input').addEventListener('input', function () {
-        const password = this.value;
-        const strengthIndicator = document.getElementById('password-strength');
-        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-        if (strongPasswordRegex.test(password)) {
-            strengthIndicator.textContent = "Strong password";
-            strengthIndicator.style.color = "green";
-        } else {
-            strengthIndicator.textContent = "Weak password";
-            strengthIndicator.style.color = "red";
-        }
-    });
-</script> --}}
