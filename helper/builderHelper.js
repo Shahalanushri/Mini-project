@@ -78,10 +78,13 @@ module.exports = {
           },
           {
             $set: {
-              Name: workspaceDetails.Name,
-              Category: workspaceDetails.Category,
+              wname: workspaceDetails.wname,
+              seat: workspaceDetails.seat,
               Price: workspaceDetails.Price,
-              Description: workspaceDetails.Description,
+              format: workspaceDetails.format,
+              desc: workspaceDetails.desc,
+              baddress: workspaceDetails.baddress,
+
             },
           }
         )
