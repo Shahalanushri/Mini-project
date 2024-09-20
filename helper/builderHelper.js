@@ -270,14 +270,18 @@ module.exports = {
     });
   },
 
-  getAllOrders: () => {
+  getAllOrders: (builderId) => {
     return new Promise(async (resolve, reject) => {
-      let orders = await db
-        .get()
-        .collection(collections.ORDER_COLLECTION)
-        .find()
-        .toArray();
-      resolve(orders);
+      try {
+        let orders = await db
+          .get()
+          .collection(collections.ORDER_COLLECTION)
+          .find({ "builderId": objectId(builderId) }) // Filter by builder ID
+          .toArray();
+        resolve(orders);
+      } catch (error) {
+        reject(error);
+      }
     });
   },
 

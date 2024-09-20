@@ -1,0 +1,56 @@
+<div class="page-content-wrapper mt-5 py-3"><br><br>
+    <div class="container-lg">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card product-details-card mb-3"> <span
+                        class="badge bg-warning text-dark position-absolute product-badge">Sale -10%</span>
+                    <div class="card-body">
+                        <div class="product-gallery-wrapper">
+                            <div class="product-gallery"><a href="/images/workspace-images/{{workspace._id}}.png"><img
+                                        class="rounded" src="/images/workspace-images/{{workspace._id}}.png"
+                                        alt=""></a><a href="/images/workspace-images/{{workspace._id}}.png"><img
+                                        class="rounded" src="/images/workspace-images/{{workspace._id}}.png"
+                                        alt=""></a><a href="/images/workspace-images/{{workspace._id}}.png"><img
+                                        class="rounded" src="/images/workspace-images/{{workspace._id}}.png" alt=""></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card product-details-card mb-3 direction-rtl">
+                    <div class="card-body">
+                        <h3>{{workspace.wname}}</h3>
+                        <h5>{{workspace.Price}}/-</h5>
+                        <p><b>Location : </b>
+                            {{workspace .baddress}}
+                        </p>
+                        <h5>Description</h5>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum soluta tempore tenetur
+                            provident
+                            eligendi porro, eius nulla? Aliquam, blanditiis id. Corporis.</p>
+                        <p class="mb-0">Lorem ipsum dolor sit, amet consectetur adipisicing elit. At ut fugit
+                            accusantium
+                            quo
+                            quidem
+                            magni laboriosam!</p>
+                        <div class="input-group">
+                            <button class="btn btn-dark w-100 mt-4" onclick="buyNow('{{workspace._id}}')">Book
+                                Now</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<script>
+    function buyNow(workspaceId) {
+        window.location.href = '/place-order/' + workspaceId;
+    }
+
+</script>

@@ -7,24 +7,24 @@
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th data-type="date" data-format="YYYY/DD/MM">Joined Date</th>
+                            <th>Name</th>
                             <th>Email</th>
                             <th>Phone</th>
                             <th>Address</th>
-                            <th>City</th>
-                            <th>Manage</th>
+                            <th>District</th>
+                            {{!-- <th>Manage</th> --}}
                         </tr>
                     </thead>
                     <tbody>
-                        {{#each users}}
+                        {{#each orders}}
                         <tr>
                             <td>{{incremented @index}}</td>
-                            <td>{{this.date}}</td>
-                            <td>{{this.Email}}</td>
-                            <td>{{this.Phone}}</td>
-                            <td>{{this.Address}}</td>
-                            <td>{{this.City}}</td>
-                            <td><a href="" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a></td>
+                            <td>{{this.user.Fname}} {{this.user.Lname}}</td>
+                            <td>{{this.user.Email}}</td>
+                            <td>{{this.user.Phone}}</td>
+                            <td>{{this.user.Address}}</td>
+                            <td>{{this.user.District}}</td>
+                            {{!-- <td><a href="" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a></td> --}}
                         </tr>
                         {{/each}}
                     </tbody>

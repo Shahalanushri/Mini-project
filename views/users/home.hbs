@@ -191,19 +191,26 @@
             <!-- Single Top Product Card -->
             {{#each workspaces}}
             <div class="col-6 col-sm-4 col-lg-4">
-                <div class="card single-product-card">
-                    <div class="card-body p-3">
-                        <!-- Product Thumbnail --><a class="product-thumbnail d-block" href="#!"><img
-                                src="/images/workspace-images/{{this._id}}.png" alt="">
-                            <!-- Badge --><span class="badge bg-dark">{{this.bname}}</span></a>
-                        <!-- Product Title --><a class="product-title d-block text-truncate"
-                            href="#!">{{this.wname}}</a>
-                        <!-- Product Price -->
-                        <p class="sale-price">Rs.{{this.Price}}/-<span>Rs.9,000/-</span> </p>
-                        <p>{{this.baddress}}</p>
-                        <a href="#!" class="btn btn-creative btn-dark  btn-lg ct-btn">View Details</a>
+                <a href="/single-workspace/{{this._id}}">
+                    <div class="card single-product-card">
+                        <div class="card-body p-3">
+                            <!-- Product Thumbnail --><a class="product-thumbnail d-block" href="#!"><img
+                                    src="/images/workspace-images/{{this._id}}.png" alt="">
+                                <!-- Badge --><span class="badge bg-dark">{{this.bname}}</span></a>
+                            <!-- Product Title --><a class="product-title d-block text-truncate"
+                                href="#!">{{this.wname}}</a>
+                            <!-- Product Price -->
+                            <p class="sale-price">Rs.{{this.Price}}/-<span>Rs.9,000/-</span> </p>
+                            <p>{{this.baddress}}</p>
+                            <a href="/single-workspace/{{this._id}}"
+                                class="ct-btn btn btn2 btn-sm btn-outline-dark d-none d-md-inline-block">View
+                                Details</a>
+                            <button class="btn btn-creative btn-dark  btn-lg ct-btn"
+                                onclick="buyNow('{{this._id}}')">Buy Now</button>
+
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
             {{/each}}
 
@@ -227,6 +234,12 @@
                         listItem[i].style.display = "none";
                     }
                 }
+            }
+
+        </script>
+        <script>
+            function buyNow(workspaceId) {
+                window.location.href = '/place-order/' + workspaceId;
             }
 
         </script>

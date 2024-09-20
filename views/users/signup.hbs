@@ -53,25 +53,22 @@
                         {{#if errors.address}}<div class="text-danger">{{errors.address}}</div>{{/if}}
                     </div>
 
-                    <div class="form-group d-flex">
-                        <input class="form-control me-2" type="number" id="text" name="Pincode" value="{{Pincode}}"
-                            placeholder="Your Pincode" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-                        <button class="btn btn-primary" type="button" id="submit">Check</button>
-                        {{#if errors.pincode}}<div class="text-danger">{{errors.pincode}}</div>{{/if}}
-                    </div>
 
                     <div class="row g-1">
                         <div class="col-lg-6">
                             <input class="form-control" type="text" name="District" id="district" value="{{District}}"
-                                placeholder="Your District Name" pattern="[A-Za-z]+" title="Only letters are allowed"
-                                readonly>
+                                placeholder="Your City" pattern="[A-Za-z]+" title="Only letters are allowed">
+                            {{#if errors.district}}<div class="text-danger">{{errors.district}}</div>{{/if}}
+
                         </div>
 
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <input class="form-control" type="text" id="state" name="State" value="{{State}}"
-                                    placeholder="Your State Name" pattern="[A-Za-z]+" title="Only letters are allowed"
-                                    readonly>
+                                <input class="form-control me-2" type="number" name="Pincode" value="{{Pincode}}"
+                                    placeholder="Your Pincode"
+                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                {{!-- <button class="btn btn-primary" type="button" id="submit">Check</button> --}}
+                                {{#if errors.pincode}}<div class="text-danger">{{errors.pincode}}</div>{{/if}}
                             </div>
                         </div>
                     </div>

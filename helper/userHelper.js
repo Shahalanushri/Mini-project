@@ -3,6 +3,8 @@ var collections = require("../config/collections");
 const bcrypt = require("bcrypt");
 const objectId = require("mongodb").ObjectID;
 const Razorpay = require("razorpay");
+const ObjectId = require('mongodb').ObjectId; // Required to convert string to ObjectId
+
 
 var instance = new Razorpay({
   key_id: "rzp_test_8NokNgt8cA3Hdv",
@@ -22,6 +24,19 @@ module.exports = {
         .find()
         .toArray();
       resolve(workspaces);
+    });
+  },
+
+  getWorkspaceById: (workspaceId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const workspace = await db.get()
+          .collection(collections.WORKSPACE_COLLECTION)
+          .findOne({ _id: ObjectId(workspaceId) });
+        resolve(workspace);
+      } catch (error) {
+        reject(error);
+      }
     });
   },
 
@@ -126,7 +141,7 @@ module.exports = {
               Email: userDetails.Email,
               Phone: userDetails.Phone,
               Address: userDetails.Address,
-              City: userDetails.City,
+              District: userDetails.District,
               Pincode: userDetails.Pincode,
             },
           }
@@ -187,55 +202,90 @@ module.exports = {
     });
   },
 
-  getCartProductList: (userId) => {
-    return new Promise(async (resolve, reject) => {
-      let cart = await db
-        .get()
-        .collection(collections.CART_COLLECTION)
-        .findOne({ user: objectId(userId) });
-      resolve(cart.products);
-    });
-  },
 
-  placeOrder: (order, products, total, user) => {
-    return new Promise(async (resolve, reject) => {
-      console.log(order, products, total);
-      let status = order["payment-method"] === "COD" ? "placed" : "pending";
-      let orderObject = {
-        deliveryDetails: {
-          mobile: order.mobile,
-          address: order.address,
-          pincode: order.pincode,
-        },
-        userId: objectId(order.userId),
-        user: user,
-        paymentMethod: order["payment-method"],
-        products: products,
-        totalAmount: total,
-        status: status,
-        date: new Date(),
-      };
+
+
+  getWorkspaceDetails: (workspaceId) => {
+    return new Promise((resolve, reject) => {
+      if (!ObjectId.isValid(workspaceId)) {
+        reject(new Error('Invalid workspace ID format'));
+        return;
+      }
+
       db.get()
-        .collection(collections.ORDER_COLLECTION)
-        .insertOne({ orderObject })
-        .then((response) => {
-          db.get()
-            .collection(collections.CART_COLLECTION)
-            .removeOne({ user: objectId(order.userId) });
-          resolve(response.ops[0]._id);
+        .collection(collections.WORKSPACE_COLLECTION)
+        .findOne({ _id: ObjectId(workspaceId) })
+        .then((workspace) => {
+          if (!workspace) {
+            reject(new Error('Workspace not found'));
+          } else {
+            // Assuming the workspace has a builderId field
+            resolve(workspace);
+          }
+        })
+        .catch((err) => {
+          reject(err);
         });
     });
   },
 
+
+
+
+  placeOrder: (order, workspace, total, user) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        console.log(order, workspace, total);
+        let status = order["payment-method"] === "COD" ? "placed" : "pending";
+
+        let orderObject = {
+          deliveryDetails: {
+            Fname: order.Fname,
+            Lname: order.Lname,
+            Email: order.Email,
+            Phone: order.Phone,
+            Address: order.Address,
+            District: order.District,
+            State: order.State,
+            Pincode: order.Pincode,
+            selecteddate: order.selecteddate,
+          },
+          userId: objectId(order.userId),
+          user: user,
+          paymentMethod: order["payment-method"],
+          workspace: workspace,
+          totalAmount: total,
+          status: status,
+          date: new Date(),
+          builderId: workspace.builderId, // Add this line to store the builder's ID
+        };
+
+        const response = await db.get()
+          .collection(collections.ORDER_COLLECTION)
+          .insertOne(orderObject);
+
+        resolve(response.ops[0]._id);
+      } catch (error) {
+        console.error("Error placing order:", error);
+        reject(error);
+      }
+    });
+  },
+
+
   getUserOrder: (userId) => {
     return new Promise(async (resolve, reject) => {
-      let orders = await db
-        .get()
-        .collection(collections.ORDER_COLLECTION)
-        .find({ "orderObject.userId": objectId(userId) })
-        .toArray();
-      // console.log(orders);
-      resolve(orders);
+      try {
+        let orders = await db
+          .get()
+          .collection(collections.ORDER_COLLECTION)
+          .find({ userId: ObjectId(userId) }) // Use 'userId' directly, not inside 'orderObject'
+          .toArray();
+
+        resolve(orders);
+      } catch (error) {
+        reject(error);
+      }
     });
   },
 

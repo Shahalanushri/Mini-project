@@ -36,6 +36,18 @@ router.get("/service", async function (req, res) {
 })
 
 
+router.get("/single-workspace/:id", async function (req, res) {
+  let user = req.session.user;
+  const workspaceId = req.params.id; // Get workspace ID from URL
+
+  try {
+    const workspace = await userHelper.getWorkspaceById(workspaceId); // Pass the workspace ID to the function
+    res.render("users/single-workspace", { admin: false, user, workspace });
+  } catch (error) {
+    console.error("Error fetching workspace:", error);
+    res.status(500).send("Server Error");
+  }
+});
 
 
 ////////////////////PROFILE////////////////////////////////////
@@ -62,7 +74,7 @@ router.get("/signup", function (req, res) {
 });
 
 router.post("/signup", async function (req, res) {
-  const { Fname, Lname, Email, Phone, Address, Pincode, Password } = req.body;
+  const { Fname, Lname, Email, Phone, Address, Pincode, District, Password } = req.body;
   let errors = {};
 
   // Check if email already exists
@@ -100,6 +112,7 @@ router.post("/signup", async function (req, res) {
   if (!Lname) errors.lname = "Please enter your last name.";
   if (!Email) errors.email = "Please enter your email.";
   if (!Address) errors.address = "Please enter your address.";
+  if (!District) errors.district = "Please enter your city.";
 
   // Password validation
   if (!Password) {
@@ -122,6 +135,7 @@ router.post("/signup", async function (req, res) {
       Phone,
       Address,
       Pincode,
+      District,
       Password
     });
   }
@@ -201,12 +215,16 @@ router.get("/edit-profile/:id", verifySignedIn, async function (req, res) {
 
 router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
   try {
-    const { Fname, Lname, Email, Phone, Address, City, Pincode } = req.body;
+    const { Fname, Lname, Email, Phone, Address, District, Pincode } = req.body;
     let errors = {};
 
     // Validate first name
     if (!Fname || Fname.trim().length === 0) {
       errors.fname = 'Please enter your first name.';
+    }
+
+    if (!District || District.trim().length === 0) {
+      errors.district = 'Please enter your first name.';
     }
 
     // Validate last name
@@ -238,7 +256,7 @@ router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
     if (!Lname) errors.lname = "Please enter your last name.";
     if (!Email) errors.email = "Please enter your email.";
     if (!Address) errors.address = "Please enter your address.";
-    if (!City) errors.city = "Please enter your city.";
+    if (!District) errors.district = "Please enter your district.";
 
     // Validate other fields as needed...
 
@@ -255,7 +273,7 @@ router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
         Email,
         Phone,
         Address,
-        City,
+        District,
         Pincode,
       });
     }
@@ -277,33 +295,40 @@ router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
 
 
 
-router.post("/change-product-quantity", function (req, res) {
-  console.log(req.body);
-  userHelper.changeProductQuantity(req.body).then((response) => {
-    res.json(response);
-  });
-});
 
-router.post("/remove-cart-product", (req, res, next) => {
-  userHelper.removeCartProduct(req.body).then((response) => {
-    res.json(response);
-  });
-});
 
-router.get("/place-order", verifySignedIn, async (req, res) => {
+router.get('/place-order/:id', async (req, res) => {
+  const workspaceId = req.params.id;
+
+  // Validate the workspace ID
+  if (!ObjectId.isValid(workspaceId)) {
+    return res.status(400).send('Invalid workspace ID format');
+  }
+
   let user = req.session.user;
-  let userId = req.session.user._id;
-  // le = await userHelper.g(userId);
-  let total = await userHelper.getTotalAmount(userId);
-  res.render("users/place-order", { admin: false, user, total });
+
+  // Fetch the product details by ID
+  let workspace = await userHelper.getWorkspaceDetails(workspaceId);
+
+  // If no workspace is found, handle the error
+  if (!workspace) {
+    return res.status(404).send('Workspace not found');
+  }
+
+  // Render the place-order page with workspace details
+  res.render('users/place-order', { user, workspace });
 });
 
-router.post("/place-order", async (req, res) => {
+router.post('/place-order', async (req, res) => {
   let user = req.session.user;
-  let products = await userHelper.getCartProductList(req.body.userId);
-  let totalPrice = await userHelper.getTotalAmount(req.body.userId);
-  userHelper
-    .placeOrder(req.body, products, totalPrice, user)
+  let workspaceId = req.body.workspaceId;
+
+  // Fetch workspace details
+  let workspace = await userHelper.getWorkspaceDetails(workspaceId);
+  let totalPrice = workspace.Price; // Get the price from the workspace
+
+  // Call placeOrder function
+  userHelper.placeOrder(req.body, workspace, totalPrice, user)
     .then((orderId) => {
       if (req.body["payment-method"] === "COD") {
         res.json({ codSuccess: true });
@@ -312,8 +337,14 @@ router.post("/place-order", async (req, res) => {
           res.json(response);
         });
       }
+    })
+    .catch((err) => {
+      console.error("Error placing order:", err);
+      res.status(500).send("Internal Server Error");
     });
 });
+
+
 
 router.post("/verify-payment", async (req, res) => {
   console.log(req.body);
@@ -339,10 +370,13 @@ router.get("/order-placed", verifySignedIn, async (req, res) => {
 router.get("/orders", verifySignedIn, async function (req, res) {
   let user = req.session.user;
   let userId = req.session.user._id;
-  // le = await userHelper.g(userId);
+
+  // Fetch user orders
   let orders = await userHelper.getUserOrder(userId);
+
   res.render("users/orders", { admin: false, user, orders });
 });
+
 
 router.get(
   "/view-ordered-products/:id",

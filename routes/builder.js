@@ -114,10 +114,20 @@ router.get("/delete-all-workspaces", verifySignedIn, function (req, res) {
 });
 
 
-router.get("/all-users", verifySignedIn, function (req, res) {
+router.get("/all-users", verifySignedIn, async function (req, res) {
   let builder = req.session.builder;
-  builderHelper.getAllUsers().then((users) => {
-    res.render("builder/all-users", { builder: true, layout: "layout", users, builder });
+
+  // Ensure you have the builder's ID available
+  let builderId = builder._id; // Adjust based on how builder ID is stored in session
+
+  // Pass builderId to getAllOrders
+  let orders = await builderHelper.getAllOrders(builderId);
+
+  res.render("builder/all-users", {
+    builder: true,
+    layout: "layout",
+    orders,
+    builder
   });
 });
 
@@ -366,11 +376,18 @@ router.get("/remove-all-users", verifySignedIn, function (req, res) {
 
 router.get("/all-orders", verifySignedIn, async function (req, res) {
   let builder = req.session.builder;
-  let orders = await builderHelper.getAllOrders();
+
+  // Ensure you have the builder's ID available
+  let builderId = builder._id; // Adjust based on how builder ID is stored in session
+
+  // Pass builderId to getAllOrders
+  let orders = await builderHelper.getAllOrders(builderId);
+
   res.render("builder/all-orders", {
-    builder: true, layout: "layout",
-    workspace,
+    builder: true,
+    layout: "layout",
     orders,
+    builder
   });
 });
 

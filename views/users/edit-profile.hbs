@@ -8,7 +8,7 @@
 <!-- Login Wrapper Area -->
 <div class="login-wrapper d-flex  align-items-center justify-content-center mt-3">
     <div class="container-lg">
-        <div class="text-center px-4"><img class="login-intro-img" src="assets/img/bg-img/36.png" alt=""></div>
+        <div class="text-center px-4"><img class="login-intro-img" src="assets/img/bg-img/36.png" alt=""></div><br>
         <!-- Register Form -->
 
         <div class="">
@@ -76,11 +76,11 @@
                         <div class="col-lg-7">
                             <div class="form-group">
                                 <label>City</label>
-                                <input class="form-control" type="text" id="City" name="City"
-                                    value="{{userProfile.City}}" pattern="[A-Za-z]+" title="Only letters are allowed"
-                                    required>
-                                {{#if errors.city}}
-                                <small class="text-danger">{{errors.city}}</small>
+                                <input class="form-control" type="text" id="District" name="District"
+                                    value="{{userProfile.District}}" pattern="[A-Za-z]+"
+                                    title="Only letters are allowed" required>
+                                {{#if errors.district}}
+                                <small class="text-danger">{{errors.district}}</small>
                                 {{/if}}
                             </div>
                         </div>
