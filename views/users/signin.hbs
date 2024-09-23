@@ -14,7 +14,7 @@
                 <p class="text-danger text-center ">{{signInErr}}</p>
 
                 {{/if}}
-                <form action="/signin" method="POST">
+                <form action="/signin" method="POST" autocomplete="off">
                     <div class="form-group">
                         <input class="form-control" type="email" name="Email" value="{{email}}"
                             placeholder="Your Email">

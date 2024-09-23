@@ -74,7 +74,7 @@ router.get("/signup", function (req, res) {
 });
 
 router.post("/signup", async function (req, res) {
-  const { Fname, Lname, Email, Phone, Address, Pincode, District, Password } = req.body;
+  const { Fname, Email, Phone, Address, Pincode, District, Password } = req.body;
   let errors = {};
 
   // Check if email already exists
@@ -109,7 +109,6 @@ router.post("/signup", async function (req, res) {
   }
 
   if (!Fname) errors.fname = "Please enter your first name.";
-  if (!Lname) errors.lname = "Please enter your last name.";
   if (!Email) errors.email = "Please enter your email.";
   if (!Address) errors.address = "Please enter your address.";
   if (!District) errors.district = "Please enter your city.";
@@ -130,7 +129,6 @@ router.post("/signup", async function (req, res) {
       layout: 'empty',
       errors,
       Fname,
-      Lname,
       Email,
       Phone,
       Address,
