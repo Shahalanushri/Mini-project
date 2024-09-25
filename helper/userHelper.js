@@ -289,42 +289,34 @@ module.exports = {
     });
   },
 
-  getOrderProducts: (orderId) => {
+  getOrderWorkspaces: (orderId) => {
     return new Promise(async (resolve, reject) => {
-      let products = await db
-        .get()
-        .collection(collections.ORDER_COLLECTION)
-        .aggregate([
-          {
-            $match: { _id: objectId(orderId) },
-          },
-          {
-            $unwind: "$orderObject.products",
-          },
-          {
-            $project: {
-              item: "$orderObject.products.item",
-              quantity: "$orderObject.products.quantity",
+      try {
+        let workspaces = await db
+          .get()
+          .collection(collections.ORDER_COLLECTION)
+          .aggregate([
+            {
+              $match: { _id: objectId(orderId) }, // Match the order by its ID
             },
-          },
-          {
-            $lookup: {
-              from: collections.PRODUCTS_COLLECTION,
-              localField: "item",
-              foreignField: "_id",
-              as: "product",
+            {
+              $project: {
+                // Include workspace, user, and other relevant fields
+                workspace: 1,
+                user: 1,
+                paymentMethod: 1,
+                totalAmount: 1,
+                status: 1,
+                date: 1,
+              },
             },
-          },
-          {
-            $project: {
-              item: 1,
-              quantity: 1,
-              product: { $arrayElemAt: ["$product", 0] },
-            },
-          },
-        ])
-        .toArray();
-      resolve(products);
+          ])
+          .toArray();
+
+        resolve(workspaces[0]); // Fetch the first (and likely only) order matching this ID
+      } catch (error) {
+        reject(error);
+      }
     });
   },
 

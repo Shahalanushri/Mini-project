@@ -295,7 +295,7 @@ router.post("/edit-profile/:id", verifySignedIn, async function (req, res) {
 
 
 
-router.get('/place-order/:id', async (req, res) => {
+router.get('/place-order/:id', verifySignedIn, async (req, res) => {
   const workspaceId = req.params.id;
 
   // Validate the workspace ID
@@ -368,30 +368,38 @@ router.get("/order-placed", verifySignedIn, async (req, res) => {
 router.get("/orders", verifySignedIn, async function (req, res) {
   let user = req.session.user;
   let userId = req.session.user._id;
-
   // Fetch user orders
   let orders = await userHelper.getUserOrder(userId);
-
   res.render("users/orders", { admin: false, user, orders });
 });
 
+router.get("/view-ordered-workspaces/:id", verifySignedIn, async function (req, res) {
+  let user = req.session.user;
+  let orderId = req.params.id;
 
-router.get(
-  "/view-ordered-products/:id",
-  verifySignedIn,
-  async function (req, res) {
-    let user = req.session.user;
-    let userId = req.session.user._id;
-    // le = await userHelper.g(userId);
-    let orderId = req.params.id;
-    let products = await userHelper.getOrderProducts(orderId);
-    res.render("users/order-products", {
+  // Log the orderId to see if it's correctly retrieved
+  console.log("Retrieved Order ID:", orderId);
+
+  // Check if orderId is valid
+  if (!ObjectId.isValid(orderId)) {
+    console.error('Invalid Order ID format:', orderId);  // Log the invalid ID
+    return res.status(400).send('Invalid Order ID');
+  }
+
+  try {
+    let workspaces = await userHelper.getOrderWorkspaces(orderId);
+    res.render("users/order-workspaces", {
       admin: false,
       user,
-      products,
+      workspaces,
     });
+  } catch (err) {
+    console.error('Error fetching ordered workspaces:', err);
+    res.status(500).send('Internal Server Error');
   }
-);
+});
+
+
 
 router.get("/cancel-order/:id", verifySignedIn, function (req, res) {
   let orderId = req.params.id;

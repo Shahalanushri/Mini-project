@@ -141,7 +141,7 @@
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
                                             id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                            {{this.orderObject.status}}
+                                            {{this.status}}
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                             <li><a class="dropdown-item"
@@ -175,6 +175,10 @@
         if (td.textContent.trim() === 'COD') {
             td.textContent = 'Cash Not Paid';
             td.style.color = 'red'; // Set text color to red
+        }
+        if (td.textContent.trim() === 'ONLINE') {
+            td.textContent = 'Cash Paid';
+            td.style.color = 'green'; // Set text color to red
         }
     });
 </script>
