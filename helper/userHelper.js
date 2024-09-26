@@ -308,6 +308,8 @@ module.exports = {
                 totalAmount: 1,
                 status: 1,
                 date: 1,
+                deliveryDetails: 1, // Add deliveryDetails to the projection
+
               },
             },
           ])
