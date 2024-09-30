@@ -26,14 +26,15 @@
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <input class="form-control" type="text" name="Fname" value="{{Fname}}"
-                                    placeholder="Your First Name" pattern="[A-Za-z]+" title="Only letters are allowed">
+                                    placeholder="Your First Name" pattern="[A-Za-z\s]+"
+                                    title="Only letters are allowed">
                                 {{#if errors.fname}}<div class="text-danger">{{errors.fname}}</div>{{/if}}
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <input class="form-control" type="text" name="Lname" value="{{Lname}}"
-                                    placeholder="Your Last Name" pattern="[A-Za-z]+" title="Only letters are allowed">
+                                    placeholder="Your Last Name" pattern="[A-Za-z\s]+" title="Only letters are allowed">
                                 {{#if errors.lname}}<div class="text-danger">{{errors.lname}}</div>{{/if}}
                             </div>
                         </div>

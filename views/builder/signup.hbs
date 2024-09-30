@@ -30,7 +30,7 @@
 
                     <div class="form-group">
                         <input class="form-control" type="text" name="Companyname" value="{{Companyname}}"
-                            placeholder="Your Company Name" pattern="[A-Za-z]+" title="Only letters are allowed">
+                            placeholder="Your Company Name" pattern="[A-Za-z\s]+" title="Only letters are allowed">
                         {{#if errors.Companyname}}<div class="text-danger">{{errors.Companyname}}</div>{{/if}}
                     </div>
 

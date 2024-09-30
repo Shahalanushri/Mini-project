@@ -37,9 +37,11 @@
                                     <div class="d-flex gap-2">
                                         {{!-- <a href="/builder/edit-workspace/{{this._id}}"
                                             class="btn btn-dark btn-sm"><i class="bi bi-pen"></i></a> --}}
-                                        <a href="/builder/delete-workspace/{{this._id}}"
-                                            onclick="return confirm('Are You Sure to Delete {{this.wname}} ?')"
-                                            class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
+                                        <a href="javascript:void(0);"
+                                            onclick="deleteWorkspace('{{this._id}}', '{{this.wname}}')"
+                                            class="btn btn-danger btn-sm">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
@@ -51,3 +53,24 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    function deleteWorkspace(id, wname) {
+        Swal.fire({
+            title: `Are you sure you want to delete "${wname}"?`,
+            text: "This action cannot be undone!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to the delete route if confirmed
+                window.location.href = `/builder/delete-workspace/${id}`;
+            }
+        });
+    }
+</script>

@@ -155,8 +155,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <a href="/builder/cancel-order/{{this._id}}"
-                                        onclick="return confirm('Are You Sure to Cancel This Order ?')"
+                                    <a href="javascript:void(0);" onclick="deleteWorkspace()"
                                         class="btn btn-danger">Cancel</a>
                                 </td>
 
@@ -181,4 +180,24 @@
             td.style.color = 'green'; // Set text color to red
         }
     });
+</script>
+
+<script>
+    function deleteWorkspace(id) {
+        Swal.fire({
+            title: `Are you sure you want to delete this order?`,
+            text: "This action cannot be undone!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to the delete route if confirmed
+                window.location.href = `/builder/cancel-order/${id}`;
+            }
+        });
+    }
 </script>
