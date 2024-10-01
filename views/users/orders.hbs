@@ -83,8 +83,10 @@
                                 href="/view-ordered-workspaces/{{this._id}}">
                                 View Details</a>
                             <a href="/cancel-order/{{this._id}}"
-                                onclick="return confirm('Are You Sure to Cancel This Order ?')"
-                                class="btn btn-danger">Cancel</a>
+                                   onclick="canelorder('{{this._id}}')"
+                                            class="btn btn-danger btn-sm">
+                                            <i class="bi bi-trash"></i>
+                                </a>
                         </div>
                     </div>
                 </div>
@@ -105,3 +107,24 @@
     </div>
     {{/if}}
 </div>
+
+
+<script>
+    function canelorder(id) {
+        Swal.fire({
+            title: `Are you sure to cancel this order "${id}"?`,
+            text: '',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#33ff68',
+            cancelButtonColor: '#d29eee',
+            confirmButtonText: 'Yes!',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to the delete route if confirmed
+                window.location.href = `/users/confirm/${id}`;
+            }
+        });
+    }
+</script>

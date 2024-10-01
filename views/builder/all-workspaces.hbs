@@ -59,13 +59,13 @@
     function deleteWorkspace(id, wname) {
         Swal.fire({
             title: `Are you sure you want to delete "${wname}"?`,
-            text: "This action cannot be undone!",
+            text: '',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'No, cancel'
+            confirmButtonColor: '#33ff68',
+            cancelButtonColor: '#d29eee',
+            confirmButtonText: 'Yes!',
+            cancelButtonText: 'No'
         }).then((result) => {
             if (result.isConfirmed) {
                 // Redirect to the delete route if confirmed
