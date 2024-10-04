@@ -82,11 +82,10 @@
                             <!-- Add To Cart Button--><a class="btn btn-dark"
                                 href="/view-ordered-workspaces/{{this._id}}">
                                 View Details</a>
-                            <a href="/cancel-order/{{this._id}}"
-                                   onclick="canelorder('{{this._id}}')"
-                                            class="btn btn-danger btn-sm">
-                                            <i class="bi bi-trash"></i>
-                                </a>
+                            <a href="javascript:void(0);" onclick="canelorder('{{this._id}}')"
+                                class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -112,7 +111,7 @@
 <script>
     function canelorder(id) {
         Swal.fire({
-            title: `Are you sure to cancel this order "${id}"?`,
+            title: `Are you sure to cancel this order?`,
             text: '',
             icon: 'warning',
             showCancelButton: true,
@@ -123,7 +122,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 // Redirect to the delete route if confirmed
-                window.location.href = `/users/confirm/${id}`;
+                window.location.href = `/cancel-order/${id}`;
             }
         });
     }
