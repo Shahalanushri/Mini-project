@@ -6,6 +6,7 @@ module.exports = {
     ORDER_COLLECTION: 'order',
     BUILDER_COLLECTION: "builder",
     WORKSPACE_COLLECTION: "workspace",
+    FEEDBACK_COLLECTION: "feedback",
 
 
 }

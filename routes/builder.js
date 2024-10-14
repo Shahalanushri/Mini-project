@@ -31,6 +31,28 @@ router.get("/profile", async function (req, res, next) {
 
 
 ///////ALL workspace/////////////////////                                         
+router.get("/all-notifications", verifySignedIn, async function (req, res) {
+  let builder = req.session.builder;
+
+  const workspaceId = req.params.id;
+
+  console.log('workspace')
+
+  try {
+    const workspace = await userHelper.getWorkspaceById(workspaceId);
+    const feedbacks = await userHelper.getFeedbackByWorkspaceId(workspaceId); // Fetch feedbacks for the specific workspace
+    console.log('feedbacks', feedbacks)
+    res.render("builder/all-notifications", { admin: true, layout: "layout", workspace, feedbacks, builder });
+  } catch (error) {
+    console.error("Error fetching workspace:", error);
+    res.status(500).send("Server Error");
+  }
+
+});
+
+
+
+///////ALL workspace/////////////////////                                         
 router.get("/all-workspaces", verifySignedIn, function (req, res) {
   let builder = req.session.builder;
   builderHelper.getAllworkspaces(req.session.builder._id).then((workspaces) => {
@@ -124,6 +146,23 @@ router.get("/all-users", verifySignedIn, async function (req, res) {
   let orders = await builderHelper.getAllOrders(builderId);
 
   res.render("builder/all-users", {
+    builder: true,
+    layout: "layout",
+    orders,
+    builder
+  });
+});
+
+router.get("/all-transactions", verifySignedIn, async function (req, res) {
+  let builder = req.session.builder;
+
+  // Ensure you have the builder's ID available
+  let builderId = builder._id; // Adjust based on how builder ID is stored in session
+
+  // Pass builderId to getAllOrders
+  let orders = await builderHelper.getAllOrders(builderId);
+
+  res.render("builder/all-transactions", {
     builder: true,
     layout: "layout",
     orders,

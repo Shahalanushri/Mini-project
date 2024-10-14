@@ -22,6 +22,7 @@ router.get("/", async function (req, res, next) {
 });
 
 
+
 router.get("/about", async function (req, res) {
   res.render("users/about", { admin: false, });
 })
@@ -36,18 +37,65 @@ router.get("/service", async function (req, res) {
 })
 
 
-router.get("/single-workspace/:id", async function (req, res) {
-  let user = req.session.user;
-  const workspaceId = req.params.id; // Get workspace ID from URL
+router.post("/add-feedback", async function (req, res) {
+  let user = req.session.user; // Ensure the user is logged in and the session is set
+  let feedbackText = req.body.text; // Get feedback text from form input
+  let username = req.body.username; // Get username from form input
+  let workspaceId = req.body.workspaceId; // Get workspace ID from form input
+
+  if (!user) {
+    return res.status(403).send("User not logged in");
+  }
 
   try {
-    const workspace = await userHelper.getWorkspaceById(workspaceId); // Pass the workspace ID to the function
-    res.render("users/single-workspace", { admin: false, user, workspace });
+    const feedback = {
+      userId: user._id, // Store user ID
+      workspaceId: workspaceId, // Associate feedback with the workspace
+      text: feedbackText,
+      username: username,
+      createdAt: new Date() // Store the timestamp
+    };
+
+    await userHelper.addFeedback(feedback);
+    res.redirect("/single-workspace/" + workspaceId); // Redirect back to the workspace page
+  } catch (error) {
+    console.error("Error adding feedback:", error);
+    res.status(500).send("Server Error");
+  }
+});
+
+
+
+
+router.get("/single-workspace/:id", async function (req, res) {
+  let user = req.session.user;
+  const workspaceId = req.params.id;
+
+  try {
+    const workspace = await userHelper.getWorkspaceById(workspaceId);
+
+    if (!workspace) {
+      return res.status(404).send("Workspace not found");
+    }
+
+    const builderId = workspace.builderId; // Assuming the workspace has a reference to the builder's ID
+    const builder = await userHelper.getBuilderById(builderId); // Fetch the builder details
+    const feedbacks = await userHelper.getFeedbackByWorkspaceId(workspaceId); // Fetch feedbacks for the specific workspace
+
+    res.render("users/single-workspace", {
+      admin: false,
+      user,
+      workspace,
+      builder, // Pass builder to the template
+      feedbacks
+    });
   } catch (error) {
     console.error("Error fetching workspace:", error);
     res.status(500).send("Server Error");
   }
 });
+
+
 
 
 ////////////////////PROFILE////////////////////////////////////

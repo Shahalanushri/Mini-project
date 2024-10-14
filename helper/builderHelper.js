@@ -303,16 +303,60 @@ module.exports = {
     });
   },
 
-  cancelOrder: (orderId) => {
-    return new Promise((resolve, reject) => {
-      db.get()
-        .collection(collections.ORDER_COLLECTION)
-        .removeOne({ _id: objectId(orderId) })
-        .then(() => {
-          resolve();
-        });
+  cancelOrder: async (orderId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Fetch the order to get the associated workspace ID
+        const order = await db.get()
+          .collection(collections.ORDER_COLLECTION)
+          .findOne({ _id: objectId(orderId) });
+
+        if (!order) {
+          return reject(new Error("Order not found."));
+        }
+
+        const workspaceId = order.workspace._id; // Get the workspace ID from the order
+
+        // Remove the order from the database
+        await db.get()
+          .collection(collections.ORDER_COLLECTION)
+          .deleteOne({ _id: objectId(orderId) });
+
+        // Get the current seat count from the workspace
+        const workspaceDoc = await db.get()
+          .collection(collections.WORKSPACE_COLLECTION)
+          .findOne({ _id: objectId(workspaceId) });
+
+        // Check if the seat field exists and is a string
+        if (workspaceDoc && workspaceDoc.seat) {
+          let seatCount = Number(workspaceDoc.seat); // Convert seat count from string to number
+
+          // Check if the seatCount is a valid number
+          if (!isNaN(seatCount)) {
+            seatCount += 1; // Increment the seat count
+
+            // Convert back to string and update the workspace seat count
+            await db.get()
+              .collection(collections.WORKSPACE_COLLECTION)
+              .updateOne(
+                { _id: objectId(workspaceId) },
+                { $set: { seat: seatCount.toString() } } // Convert number back to string
+              );
+
+            resolve(); // Successfully updated the seat count
+          } else {
+            return reject(new Error("Seat count is not a valid number."));
+          }
+        } else {
+          return reject(new Error("Workspace not found or seat field is missing."));
+        }
+      } catch (error) {
+        console.error("Error canceling order:", error);
+        reject(error);
+      }
     });
   },
+
 
   cancelAllOrders: () => {
     return new Promise((resolve, reject) => {

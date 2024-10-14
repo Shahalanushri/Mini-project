@@ -11,11 +11,18 @@ var fileUpload = require("express-fileupload");
 var db = require("./config/connection");
 var session = require("express-session");
 var app = express();
+const Handlebars = require('handlebars');
+
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
 
+Handlebars.registerHelper('eq', function (a, b) {
+  return a === b;
+});
+
+// Set up Handlebars engine with helpers
 app.engine(
   "hbs",
   hbs({
@@ -28,9 +35,15 @@ app.engine(
         index++;
         return index;
       },
+      eq: function (a, b) {
+        return a === b;
+      },
     },
   })
 );
+
+
+
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

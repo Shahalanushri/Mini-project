@@ -13,6 +13,56 @@ var instance = new Razorpay({
 
 module.exports = {
 
+  addFeedback: (feedback) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await db.get()
+          .collection(collections.FEEDBACK_COLLECTION)
+          .insertOne(feedback);
+        resolve(); // Resolve the promise on success
+      } catch (error) {
+        reject(error); // Reject the promise on error
+      }
+    });
+  },
+
+
+
+
+  getFeedbackByWorkspaceId: (workspaceId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const feedbacks = await db.get()
+          .collection(collections.FEEDBACK_COLLECTION)
+          .find({ workspaceId: workspaceId }) // Filter by workspace ID
+          .toArray();
+        resolve(feedbacks);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
+
+  getBuilderById: (builderId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const builder = await db.get()
+          .collection(collections.BUILDER_COLLECTION)
+          .findOne({ _id: ObjectId(builderId) });
+        resolve(builder);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
+
+
+
+
+
+
 
   ///////GET ALL workspace/////////////////////     
 
@@ -238,6 +288,23 @@ module.exports = {
         console.log(order, workspace, total);
         let status = order["payment-method"] === "COD" ? "placed" : "pending";
 
+        // Get the workspace document to check the current seat value
+        const workspaceDoc = await db.get()
+          .collection(collections.WORKSPACE_COLLECTION)
+          .findOne({ _id: objectId(workspace._id) });
+
+        // Check if the workspace exists and the seat field is present
+        if (!workspaceDoc || !workspaceDoc.seat) {
+          return reject(new Error("Workspace not found or seat field is missing."));
+        }
+
+        // Convert seat from string to number and check availability
+        let seatCount = Number(workspaceDoc.seat);
+        if (isNaN(seatCount) || seatCount <= 0) {
+          return reject(new Error("Seat is not available."));
+        }
+
+        // Create the order object
         let orderObject = {
           deliveryDetails: {
             Fname: order.Fname,
@@ -257,12 +324,24 @@ module.exports = {
           totalAmount: total,
           status: status,
           date: new Date(),
-          builderId: workspace.builderId, // Add this line to store the builder's ID
+          builderId: workspace.builderId, // Store the builder's ID
         };
 
+        // Insert the order into the database
         const response = await db.get()
           .collection(collections.ORDER_COLLECTION)
           .insertOne(orderObject);
+
+        // Decrement the seat count
+        seatCount -= 1; // Decrement the seat count
+
+        // Convert back to string and update the workspace seat count
+        await db.get()
+          .collection(collections.WORKSPACE_COLLECTION)
+          .updateOne(
+            { _id: objectId(workspace._id) },
+            { $set: { seat: seatCount.toString() } } // Convert number back to string
+          );
 
         resolve(response.ops[0]._id);
       } catch (error) {
