@@ -5,6 +5,114 @@ const objectId = require("mongodb").ObjectID;
 
 module.exports = {
 
+
+  ///////ADD notification/////////////////////                                         
+  addnotification: (notification, callback) => {
+    console.log(notification);
+    notification.Price = parseInt(notification.Price);
+    db.get()
+      .collection(collections.NOTIFICATION_COLLECTION)
+      .insertOne(notification)
+      .then((data) => {
+        console.log(data);
+        callback(data.ops[0]._id);
+      });
+  },
+
+  ///////GET ALL notification/////////////////////                                            
+  getAllnotifications: () => {
+    return new Promise(async (resolve, reject) => {
+      let notifications = await db
+        .get()
+        .collection(collections.NOTIFICATION_COLLECTION)
+        .find()
+        .toArray();
+      resolve(notifications);
+    });
+  },
+
+  ///////ADD notification DETAILS/////////////////////                                            
+  getnotificationDetails: (notificationId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.NOTIFICATION_COLLECTION)
+        .findOne({
+          _id: objectId(notificationId)
+        })
+        .then((response) => {
+          resolve(response);
+        });
+    });
+  },
+
+  ///////DELETE notification/////////////////////                                            
+  deletenotification: (notificationId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.NOTIFICATION_COLLECTION)
+        .removeOne({
+          _id: objectId(notificationId)
+        })
+        .then((response) => {
+          console.log(response);
+          resolve(response);
+        });
+    });
+  },
+
+  ///////UPDATE notification/////////////////////                                            
+  updatenotification: (notificationId, notificationDetails) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.NOTIFICATION_COLLECTION)
+        .updateOne(
+          {
+            _id: objectId(notificationId)
+          },
+          {
+            $set: {
+              Name: notificationDetails.Name,
+              Category: notificationDetails.Category,
+              Price: notificationDetails.Price,
+              Description: notificationDetails.Description,
+            },
+          }
+        )
+        .then((response) => {
+          resolve();
+        });
+    });
+  },
+
+
+  ///////DELETE ALL notification/////////////////////                                            
+  deleteAllnotifications: () => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.NOTIFICATION_COLLECTION)
+        .remove({})
+        .then(() => {
+          resolve();
+        });
+    });
+  },
+
+
+
+  getFeedbackByBuilderId: (builderId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const feedbacks = await db.get()
+          .collection(collections.FEEDBACK_COLLECTION)
+          .find({ builderId: objectId(builderId) }) // Convert builderId to ObjectId
+          .toArray();
+        resolve(feedbacks);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
   ///////ADD workspace/////////////////////                                         
   addworkspace: (workspace, builderId, callback) => {
     if (!builderId || !objectId.isValid(builderId)) {

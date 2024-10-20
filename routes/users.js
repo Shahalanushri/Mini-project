@@ -1,5 +1,7 @@
 var express = require("express");
 var userHelper = require("../helper/userHelper");
+var builderHelper = require("../helper/builderHelper");
+
 var router = express.Router();
 var db = require("../config/connection");
 var collections = require("../config/collections");
@@ -22,6 +24,12 @@ router.get("/", async function (req, res, next) {
 });
 
 
+router.get("/notifications", verifySignedIn, function (req, res) {
+  let user = req.session.user;
+  builderHelper.getAllnotifications().then((notifications) => {
+    res.render("users/notifications", { admin: false, notifications, user });
+  });
+});
 
 router.get("/about", async function (req, res) {
   res.render("users/about", { admin: false, });
@@ -42,6 +50,7 @@ router.post("/add-feedback", async function (req, res) {
   let feedbackText = req.body.text; // Get feedback text from form input
   let username = req.body.username; // Get username from form input
   let workspaceId = req.body.workspaceId; // Get workspace ID from form input
+  let builderId = req.body.builderId; // Get builder ID from form input
 
   if (!user) {
     return res.status(403).send("User not logged in");
@@ -49,8 +58,9 @@ router.post("/add-feedback", async function (req, res) {
 
   try {
     const feedback = {
-      userId: user._id, // Store user ID
-      workspaceId: workspaceId, // Associate feedback with the workspace
+      userId: ObjectId(user._id), // Convert user ID to ObjectId
+      workspaceId: ObjectId(workspaceId), // Convert workspace ID to ObjectId
+      builderId: ObjectId(builderId), // Convert builder ID to ObjectId
       text: feedbackText,
       username: username,
       createdAt: new Date() // Store the timestamp
@@ -66,7 +76,6 @@ router.post("/add-feedback", async function (req, res) {
 
 
 
-
 router.get("/single-workspace/:id", async function (req, res) {
   let user = req.session.user;
   const workspaceId = req.params.id;
@@ -77,16 +86,12 @@ router.get("/single-workspace/:id", async function (req, res) {
     if (!workspace) {
       return res.status(404).send("Workspace not found");
     }
-
-    const builderId = workspace.builderId; // Assuming the workspace has a reference to the builder's ID
-    const builder = await userHelper.getBuilderById(builderId); // Fetch the builder details
     const feedbacks = await userHelper.getFeedbackByWorkspaceId(workspaceId); // Fetch feedbacks for the specific workspace
 
     res.render("users/single-workspace", {
       admin: false,
       user,
       workspace,
-      builder, // Pass builder to the template
       feedbacks
     });
   } catch (error) {

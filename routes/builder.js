@@ -23,31 +23,123 @@ router.get("/", verifySignedIn, function (req, res, next) {
 });
 
 
+///////ALL notification/////////////////////                                         
+router.get("/all-notifications", verifySignedIn, function (req, res) {
+  let builder = req.session.builder;
+  builderHelper.getAllnotifications().then((notifications) => {
+    res.render("builder/all-notifications", { builder: true, layout: "layout", notifications, builder });
+  });
+});
+
+///////ADD notification/////////////////////                                         
+router.get("/add-notification", verifySignedIn, function (req, res) {
+  let builder = req.session.builder;
+  res.render("builder/all-notifications", { builder: true, layout: "layout", builder });
+});
+
+///////ADD notification/////////////////////                                         
+router.post("/add-notification", function (req, res) {
+  builderHelper.addnotification(req.body, (id) => {
+    res.redirect("/builder/all-notifications");
+  });
+});
+
+///////EDIT notification/////////////////////                                         
+router.get("/edit-notification/:id", verifySignedIn, async function (req, res) {
+  let builder = req.session.builder;
+  let notificationId = req.params.id;
+  let notification = await builderHelper.getnotificationDetails(notificationId);
+  console.log(notification);
+  res.render("builder/edit-notification", { builder: true, layout: "layout", notification, builder });
+});
+
+///////EDIT notification/////////////////////                                         
+router.post("/edit-notification/:id", verifySignedIn, function (req, res) {
+  let notificationId = req.params.id;
+  builderHelper.updatenotification(notificationId, req.body).then(() => {
+    if (req.files) {
+      let image = req.files.Image;
+      if (image) {
+        image.mv("./public/images/notification-images/" + notificationId + ".png");
+      }
+    }
+    res.redirect("/builder/all-notifications");
+  });
+});
+
+///////DELETE notification/////////////////////                                         
+router.get("/delete-notification/:id", verifySignedIn, function (req, res) {
+  let notificationId = req.params.id;
+  builderHelper.deletenotification(notificationId).then((response) => {
+    res.redirect("/builder/all-notifications");
+  });
+});
+
+///////DELETE ALL notification/////////////////////                                         
+router.get("/delete-all-notifications", verifySignedIn, function (req, res) {
+  builderHelper.deleteAllnotifications().then(() => {
+    res.redirect("/builder/all-notifications");
+  });
+});
+
+
 ////////////////////PROFILE////////////////////////////////////
 router.get("/profile", async function (req, res, next) {
   let builder = req.session.builder;
-  res.render("builder/profile", { admin: true, layout: "layout", builder });
+  res.render("builder/profile", { builder: true, layout: "layout", builder });
 });
 
 
 ///////ALL workspace/////////////////////                                         
-router.get("/all-notifications", verifySignedIn, async function (req, res) {
-  let builder = req.session.builder;
+// router.get("/all-feedbacks", verifySignedIn, async function (req, res) {
+//   let builder = req.session.builder;
 
-  const workspaceId = req.params.id;
+//   const workspaceId = req.params.id;
 
-  console.log('workspace')
+//   console.log('workspace')
 
-  try {
-    const workspace = await userHelper.getWorkspaceById(workspaceId);
-    const feedbacks = await userHelper.getFeedbackByWorkspaceId(workspaceId); // Fetch feedbacks for the specific workspace
-    console.log('feedbacks', feedbacks)
-    res.render("builder/all-notifications", { admin: true, layout: "layout", workspace, feedbacks, builder });
-  } catch (error) {
-    console.error("Error fetching workspace:", error);
-    res.status(500).send("Server Error");
+//   try {
+//     const workspace = await userHelper.getWorkspaceById(workspaceId);
+//     const feedbacks = await userHelper.getFeedbackByWorkspaceId(workspaceId); // Fetch feedbacks for the specific workspace
+//     console.log('feedbacks', feedbacks)
+//     res.render("builder/all-feedbacks", { builder: true, layout: "layout", workspace, feedbacks, builder });
+//   } catch (error) {
+//     console.error("Error fetching workspace:", error);
+//     res.status(500).send("Server Error");
+//   }
+
+// });
+
+
+router.get("/builder-feedback", async function (req, res) {
+  let builder = req.session.builder; // Get the builder from session
+
+  if (!builder) {
+    return res.status(403).send("Builder not logged in");
   }
 
+  try {
+    // Fetch feedback for this builder
+    const feedbacks = await builderHelper.getFeedbackByBuilderId(builder._id);
+
+    // Fetch workspace details for each feedback
+    const feedbacksWithWorkspaces = await Promise.all(feedbacks.map(async feedback => {
+      const workspace = await userHelper.getWorkspaceById(ObjectId(feedback.workspaceId)); // Convert workspaceId to ObjectId
+      if (workspace) {
+        feedback.workspaceName = workspace.name; // Attach workspace name to feedback
+      }
+      return feedback;
+    }));
+
+    // Render the feedback page with builder, feedbacks, and workspace data
+    res.render("builder/all-feedbacks", {
+      builder,  // Builder details
+      feedbacks: feedbacksWithWorkspaces // Feedback with workspace details
+    });
+  } catch (error) {
+    console.error("Error fetching feedback and workspaces:", error);
+    res.status(500).send("Server Error");
+  }
 });
 
 
@@ -56,14 +148,14 @@ router.get("/all-notifications", verifySignedIn, async function (req, res) {
 router.get("/all-workspaces", verifySignedIn, function (req, res) {
   let builder = req.session.builder;
   builderHelper.getAllworkspaces(req.session.builder._id).then((workspaces) => {
-    res.render("builder/all-workspaces", { admin: true, layout: "layout", workspaces, builder });
+    res.render("builder/all-workspaces", { builder: true, layout: "layout", workspaces, builder });
   });
 });
 
 ///////ADD workspace/////////////////////                                         
 router.get("/add-workspace", verifySignedIn, function (req, res) {
   let builder = req.session.builder;
-  res.render("builder/add-workspace", { admin: true, layout: "layout", builder });
+  res.render("builder/add-workspace", { builder: true, layout: "layout", builder });
 });
 
 ///////ADD workspace/////////////////////                                         
@@ -102,7 +194,7 @@ router.get("/edit-workspace/:id", verifySignedIn, async function (req, res) {
   let workspaceId = req.params.id;
   let workspace = await builderHelper.getworkspaceDetails(workspaceId);
   console.log(workspace);
-  res.render("builder/edit-workspace", { admin: true, layout: "layout", workspace, builder });
+  res.render("builder/edit-workspace", { builder: true, layout: "layout", workspace, builder });
 });
 
 ///////EDIT workspace/////////////////////                                         

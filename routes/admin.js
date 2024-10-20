@@ -32,6 +32,8 @@ router.get("/all-builders", verifySignedIn, function (req, res) {
   });
 });
 
+
+
 router.post("/approve-builder/:id", verifySignedIn, async function (req, res) {
   await db.get().collection(collections.BUILDER_COLLECTION).updateOne(
     { _id: ObjectId(req.params.id) },
@@ -256,13 +258,25 @@ router.get("/remove-all-users", verifySignedIn, function (req, res) {
 
 router.get("/all-orders", verifySignedIn, async function (req, res) {
   let administator = req.session.admin;
-  let orders = await adminHelper.getAllOrders();
-  res.render("admin/all-orders", {
-    admin: true, layout: "admin-layout",
-    administator,
-    orders,
-  });
+  let { fromDate, toDate } = req.query; // Get fromDate and toDate from the query parameters
+
+  try {
+    let orders = await adminHelper.getAllOrders(fromDate, toDate); // Pass the date range to the function
+
+    res.render("admin/finance", {
+      admin: true,
+      layout: "admin-layout",
+      administator,
+      orders,     // Render the filtered orders
+      fromDate,   // Pass back toDate and fromDate to display on the form
+      toDate
+    });
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).send("Server Error");
+  }
 });
+
 
 router.get(
   "/view-ordered-products/:id",

@@ -34,8 +34,9 @@ module.exports = {
       try {
         const feedbacks = await db.get()
           .collection(collections.FEEDBACK_COLLECTION)
-          .find({ workspaceId: workspaceId }) // Filter by workspace ID
+          .find({ workspaceId: ObjectId(workspaceId) }) // Convert workspaceId to ObjectId
           .toArray();
+
         resolve(feedbacks);
       } catch (error) {
         reject(error);
@@ -82,7 +83,7 @@ module.exports = {
       try {
         const workspace = await db.get()
           .collection(collections.WORKSPACE_COLLECTION)
-          .findOne({ _id: ObjectId(workspaceId) });
+          .findOne({ _id: ObjectId(workspaceId) }); // Convert workspaceId to ObjectId
         resolve(workspace);
       } catch (error) {
         reject(error);

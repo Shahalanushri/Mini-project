@@ -50,8 +50,8 @@
                     <hr>
                     {{#if user}}
                     <form action="/add-feedback" method="post" class="mb-3">
-                        <input type="text" name="workspaceId" value="{{workspace._id}}">
-                        <input type="text" name="builderId" value="{{builder._id}}">
+                        <input type="hidden" name="workspaceId" value={{workspace._id}}>
+                        <input type="hidden" name="builderId" value={{workspace.builderId}}>
 
                         <!-- Hidden field for workspace ID -->
                         <label for="" class="mb-2">Your name</label>

@@ -1,32 +1,52 @@
 <div class="page-content-wrapper main-content">
     <div class="container-md">
         <h4 class="mt-3 mb-3">Manage Notifications</h4>
+
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="w-100" id="dataTable">
-                        <thead>
-                            <tr>
-                                <th scope="col">No</th>
-                                <th scope="col">Date</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Feedback</th>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <h5>Add your notifications</h5>
+                        <hr>
+                        <form action="/builder/add-notification" method="post" class="mb-3">
+
+
+                            <!-- Hidden field for workspace ID -->
+                            <label for="" class="mb-2">Your name</label>
+                            <input class="form-control" type="text" name="buildername" value={{builder.Companyname}}>
+                            <label for="" class="mb-2 mt-3">Message</label>
+                            <textarea class="form-control " type="text" name="text" required
+                                placeholder="Enter your message"></textarea>
+                            <button type="submit" class="btn btn-dark mt-3 w-100">Submit</button>
+                        </form>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="table-responsive">
+                            <table class="w-100" id="dataTable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">No</th>
+                                        {{!-- <th scope="col">Date</th> --}}
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Notifications</th>
 
 
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{#each feedbacks}}
-                            <tr class="">
-                                <td>{{incremented @index}}</td>
-                                <td class="date-cell">{{this.createdAt}}</td>
-                                <td>{{this.username}}</td>
-                                <td>{{this.text}}</td>
-                            </tr>
-                            {{/each}}
-                        </tbody>
-                    </table>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each notifications}}
+                                    <tr class="">
+                                        <td>{{incremented @index}}</td>
+                                        {{!-- <td class="date-cell">{{this.createdAt}}</td> --}}
+                                        <td>{{this.buildername}}</td>
+                                        <td>{{this.text}}</td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

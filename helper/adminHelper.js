@@ -250,14 +250,54 @@ module.exports = {
     });
   },
 
-  getAllOrders: () => {
+  getAllOrders: (fromDate, toDate) => {
     return new Promise(async (resolve, reject) => {
-      let orders = await db
-        .get()
-        .collection(collections.ORDER_COLLECTION)
-        .find()
-        .toArray();
-      resolve(orders);
+      try {
+        let query = {};
+
+        // If fromDate and toDate are provided, filter orders by the date range
+        if (fromDate && toDate) {
+          // Add one day to toDate and set it to midnight
+          const adjustedToDate = new Date(toDate);
+          adjustedToDate.setDate(adjustedToDate.getDate() + 1);
+
+          query = {
+            date: {
+              $gte: new Date(fromDate), // Orders from the start date
+              $lt: adjustedToDate       // Orders up to the end of the toDate
+            }
+          };
+        }
+
+        let orders = await db.get()
+          .collection(collections.ORDER_COLLECTION)
+          .find(query)
+          .toArray();
+
+        resolve(orders);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
+
+  getOrdersByDateRange: (fromDate, toDate) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const orders = await db.get()
+          .collection(collections.ORDER_COLLECTION)
+          .find({
+            createdAt: {
+              $gte: new Date(fromDate), // Greater than or equal to the fromDate
+              $lte: new Date(toDate)    // Less than or equal to the toDate
+            }
+          })
+          .toArray();
+        resolve(orders);
+      } catch (error) {
+        reject(error);
+      }
     });
   },
 
