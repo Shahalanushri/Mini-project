@@ -7,7 +7,7 @@ module.exports = {
     BUILDER_COLLECTION: "builder",
     WORKSPACE_COLLECTION: "workspace",
     FEEDBACK_COLLECTION: "feedback",
-    NOTIFICATION_COLLECTION: "notification",
+    NOTIFICATIONS_COLLECTION: "notification",
 
 
 }

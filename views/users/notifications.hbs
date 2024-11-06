@@ -15,11 +15,11 @@
                 <hr>
                 {{#each notifications}}
                 <div class="card p-3 shadow mb-2">
-
+                    <p>{{formatDate this.createdAt}}</p>
                     <p>
-                        <strong class="">{{this.buildername}}<br></strong>
+                        <strong class="">By {{this.by}}<br></strong>
                     </p>
-                    <p>{{this.text}}</p>
+                    <p>{{this.message}}</p>
                 </div>
                 {{else}}
                 <p>No notifications available!</p>

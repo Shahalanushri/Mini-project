@@ -25,9 +25,14 @@ router.get("/", async function (req, res, next) {
 
 
 router.get("/notifications", verifySignedIn, function (req, res) {
-  let user = req.session.user;
-  builderHelper.getAllnotifications().then((notifications) => {
+  let user = req.session.user;  // Get logged-in user from session
+
+  // Use the user._id to fetch notifications for the logged-in user
+  userHelper.getnotificationById(user._id).then((notifications) => {
     res.render("users/notifications", { admin: false, notifications, user });
+  }).catch((err) => {
+    console.error("Error fetching notifications:", err);
+    res.status(500).send("Error fetching notifications");
   });
 });
 
@@ -228,7 +233,6 @@ router.post("/signin", function (req, res) {
       signInErr: req.session.signInErr,
       email: Email,
       password: Password,
-
     });
   }
 
@@ -238,7 +242,8 @@ router.post("/signin", function (req, res) {
       req.session.user = response.user;
       res.redirect("/");
     } else {
-      req.session.signInErr = "Invalid Email/Password";
+      // If the user is disabled, display the message
+      req.session.signInErr = response.msg || "Invalid Email/Password";
       res.render("users/signin", {
         admin: false,
         layout: 'empty',
@@ -248,6 +253,7 @@ router.post("/signin", function (req, res) {
     }
   });
 });
+
 
 
 

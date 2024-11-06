@@ -24,6 +24,34 @@ router.get("/", verifySignedIn, function (req, res, next) {
 });
 
 
+
+router.get("/all-notifications", verifySignedIn, async function (req, res) {
+  let administator = req.session.admin;
+  let notifications = await adminHelper.getAllnotifications();
+  res.render("admin/all-notifications", { admin: true, layout: "admin-layout", administator, notifications });
+});
+
+///////ADD reply/////////////////////                                         
+router.get("/add-notification", verifySignedIn, async function (req, res) {
+  let administator = req.session.admin;
+  let users = await adminHelper.getAllUsers();
+  res.render("admin/add-notification", { admin: true, layout: "admin-layout", administator, users });
+});
+
+///////ADD notification/////////////////////                                         
+router.post("/add-notification", function (req, res) {
+  adminHelper.addnotification(req.body, (id) => {
+    res.redirect("/admin/all-notifications");
+  });
+});
+
+router.get("/delete-notification/:id", verifySignedIn, function (req, res) {
+  let notificationId = req.params.id;
+  adminHelper.deletenotification(notificationId).then((response) => {
+    res.redirect("/admin/all-notifications");
+  });
+});
+
 ///////ALL builder/////////////////////                                         
 router.get("/all-builders", verifySignedIn, function (req, res) {
   let administator = req.session.admin;
@@ -243,13 +271,18 @@ router.get("/all-users", verifySignedIn, function (req, res) {
   });
 });
 
-router.get("/remove-user/:id", verifySignedIn, function (req, res) {
+router.get("/block-user/:id", verifySignedIn, function (req, res) {
   let userId = req.params.id;
-  adminHelper.removeUser(userId).then(() => {
+  console.log("Blocking user with ID:", userId); // Log the userId for debugging
+
+  // Call the helper function to set the user's isDisable field to true
+  adminHelper.blockUser(userId).then(() => {
+    res.redirect("/admin/all-users");
+  }).catch((err) => {
+    console.log(err);
     res.redirect("/admin/all-users");
   });
 });
-
 router.get("/remove-all-users", verifySignedIn, function (req, res) {
   adminHelper.removeAllUsers().then(() => {
     res.redirect("/admin/all-users");

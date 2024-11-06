@@ -2,8 +2,88 @@ var db = require("../config/connection");
 var collections = require("../config/collections");
 var bcrypt = require("bcrypt");
 const objectId = require("mongodb").ObjectID;
+const { ObjectId } = require('mongodb'); // Import ObjectId for MongoDB
 
 module.exports = {
+
+  ///////ADD builder/////////////////////                                         
+  addnotification: (notification, callback) => {
+    console.log(notification);
+
+    // Convert userId to ObjectId if it's present
+    if (notification.userId) {
+      notification.userId = new objectId(notification.userId);
+    }
+
+    // Add createdAt field with the current timestamp
+    notification.createdAt = new Date();
+
+    db.get()
+      .collection(collections.NOTIFICATIONS_COLLECTION)
+      .insertOne(notification)
+      .then((data) => {
+        console.log(data);
+        callback(data.ops[0]._id);
+      })
+      .catch((err) => {
+        console.error("Error inserting notification:", err);
+        callback(null);  // Handle error case by passing null
+      });
+  },
+
+
+  ///////GET ALL Notifications/////////////////////                                            
+  getAllnotifications: () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Fetch all notifications and join with users collection to get Fname
+        let notifications = await db
+          .get()
+          .collection(collections.NOTIFICATIONS_COLLECTION)
+          .aggregate([
+            {
+              $lookup: {
+                from: collections.USERS_COLLECTION,  // Name of the users collection
+                localField: "userId",  // Field in notifications collection (userId)
+                foreignField: "_id",  // Field in users collection (_id)
+                as: "userDetails",  // Name of the array where user data will be stored
+              },
+            },
+            {
+              $unwind: {
+                path: "$userDetails",  // Flatten the userDetails array
+                preserveNullAndEmptyArrays: true,  // If user not found, keep notification
+              },
+            },
+          ])
+          .toArray();
+
+        // Map over the notifications and add user first name (Fname)
+        notifications = notifications.map(notification => ({
+          ...notification,
+          userFname: notification.userDetails ? notification.userDetails.Fname : 'Unknown',  // Fname of user or 'Unknown' if no user found
+        }));
+
+        resolve(notifications);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  },
+
+  deletenotification: (notificationId) => {
+    return new Promise((resolve, reject) => {
+      db.get()
+        .collection(collections.NOTIFICATIONS_COLLECTION)
+        .removeOne({
+          _id: objectId(notificationId)
+        })
+        .then((response) => {
+          console.log(response);
+          resolve(response);
+        });
+    });
+  },
 
   ///////ADD builder/////////////////////                                         
   addbuilder: (builder, callback) => {
@@ -219,14 +299,21 @@ module.exports = {
 
   getAllUsers: () => {
     return new Promise(async (resolve, reject) => {
-      let users = await db
-        .get()
-        .collection(collections.USERS_COLLECTION)
-        .find()
-        .toArray();
-      resolve(users);
+      try {
+        const users = await db
+          .get()
+          .collection(collections.USERS_COLLECTION)
+          .find()
+          .sort({ createdAt: -1 })  // Sort by createdAt in descending order
+          .toArray();
+
+        resolve(users);
+      } catch (err) {
+        reject(err);  // Handle any error during fetching
+      }
     });
   },
+
 
   removeUser: (userId) => {
     return new Promise((resolve, reject) => {
@@ -236,6 +323,30 @@ module.exports = {
         .then(() => {
           resolve();
         });
+    });
+  },
+
+  blockUser: (userId) => {
+    return new Promise((resolve, reject) => {
+      try {
+        // Convert the userId to ObjectId if it's not already
+        const objectId = new ObjectId(userId);
+
+        // Use updateOne to set isDisable to true
+        db.get().collection(collections.USERS_COLLECTION).updateOne(
+          { _id: objectId }, // Find user by ObjectId
+          { $set: { isDisable: true } }, // Set the isDisable field to true
+          (err, result) => {
+            if (err) {
+              reject(err); // Reject if there's an error
+            } else {
+              resolve(result); // Resolve if the update is successful
+            }
+          }
+        );
+      } catch (err) {
+        reject(err); // Catch any error in case of an invalid ObjectId format
+      }
     });
   },
 

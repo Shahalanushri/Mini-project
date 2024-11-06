@@ -10,12 +10,22 @@
                         <hr>
                         <form action="/builder/add-notification" method="post" class="mb-3">
 
+                            <input type="hidden" name="builderId" value="{{builder._id}}">
+                            <input type="hidden" name="by" value="{{builder.Companyname}}">
 
                             <!-- Hidden field for workspace ID -->
-                            <label for="" class="mb-2">Your name</label>
+                            {{!-- <label for="" class="mb-2">Your name</label>
                             <input class="form-control" type="text" name="buildername" value={{builder.Companyname}}>
+                            --}}
+
+                            <select class="form-select" name="userId" aria-label="Default select example">
+                                <option selected>Select User</option>
+                                {{#each orders}}
+                                <option value="{{this.user._id}}">{{this.user.Fname}} {{this.user.Lname}}</option>
+                                {{/each}}
+                            </select>
                             <label for="" class="mb-2 mt-3">Message</label>
-                            <textarea class="form-control " type="text" name="text" required
+                            <textarea class="form-control " type="text" name="message" required
                                 placeholder="Enter your message"></textarea>
                             <button type="submit" class="btn btn-dark mt-3 w-100">Submit</button>
                         </form>
@@ -26,9 +36,11 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">No</th>
-                                        {{!-- <th scope="col">Date</th> --}}
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Notifications</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">From</th>
+                                        <th scope="col">To</th>
+                                        <th scope="col">Message</th>
+                                        <th scope="col">Delete</th>
 
 
 
@@ -38,9 +50,16 @@
                                     {{#each notifications}}
                                     <tr class="">
                                         <td>{{incremented @index}}</td>
-                                        {{!-- <td class="date-cell">{{this.createdAt}}</td> --}}
-                                        <td>{{this.buildername}}</td>
-                                        <td>{{this.text}}</td>
+                                        <td class="date-cell">{{this.createdAt}}</td>
+                                        <td>{{this.by}}</td>
+                                        <td>{{this.userDetails.Fname}} {{this.userDetails.Lname}}</td>
+
+                                        <td>{{this.message}}</td>
+                                        <td>
+                                            <a href="/builder/delete-notification/{{this._id}}"
+                                                onclick="return confirm('Are You Sure to Delete This ?')"
+                                                class="btn btn-danger">Delete</a>
+                                        </td>
                                     </tr>
                                     {{/each}}
                                 </tbody>

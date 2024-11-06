@@ -19,6 +19,8 @@
                     <div class="card-body">
                         <h5 class="card-title">All Users</h5>
 
+
+
                         <div class="table-responsive">
                             <!-- Table with stripped rows -->
                             <table class="table datatable">
@@ -42,8 +44,18 @@
                                         <td>{{this.Phone}}</td>
                                         <td>{{this.Address}}</td>
                                         <td>{{this.City}}</td>
-                                        <td><a href="" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a>
+                                        {{#if this.isDisable}}
+                                        <td>
+                                            <button class="btn btn-secondary btn-sm" disabled>Blocked</button>
                                         </td>
+                                        {{else}}
+                                        <td>
+                                            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#blockModal"
+                                                onclick="setUserIdToBlock('{{this._id}}')">Block</a>
+
+                                        </td>
+                                        {{/if}}
                                     </tr>
                                     {{/each}}
                                 </tbody>
@@ -59,3 +71,68 @@
     </section>
 
 </main><!-- End #main -->
+
+<div class="modal fade" id="blockModal" tabindex="-1" aria-labelledby="blockModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="blockModalLabel">Block User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <textarea id="blockReason" class="form-control" rows="4"
+                    placeholder="Enter reason for blocking..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" onclick="blockUser()">Block User</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let userIdToBlock = null;
+
+    function setUserIdToBlock(userId) {
+        userIdToBlock = userId;
+    }
+
+</script>
+<script>
+    function blockUser() {
+        const reason = document.getElementById("blockReason").value;
+
+        if (reason.trim() === "") {
+            alert("Please enter a reason for blocking.");
+            return;
+        }
+
+        // Send a request to the server to block the user
+        fetch(`/admin/block-user/${userIdToBlock}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                reason: reason,
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close the modal
+                    $('#blockModal').modal('hide');
+                    alert('User blocked successfully');
+                    // You can also reload the page or update the UI
+                    location.reload();
+                } else {
+                    alert('Failed to block the user');
+                }
+            })
+            .catch(error => {
+                console.error('Error blocking user:', error);
+            });
+    }
+</script>

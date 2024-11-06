@@ -8,28 +8,69 @@ module.exports = {
 
   ///////ADD notification/////////////////////                                         
   addnotification: (notification, callback) => {
-    console.log(notification);
-    notification.Price = parseInt(notification.Price);
+    // Convert builderId and userId to ObjectId if they are provided in the notification
+    if (notification.builderId) {
+      notification.builderId = objectId(notification.builderId); // Convert builderId to objectId
+    }
+
+    if (notification.userId) {
+      notification.userId = objectId(notification.userId); // Convert userId to ObjectId
+    }
+
+    notification.createdAt = new Date(); // Set createdAt as the current date and time
+
+    console.log(notification);  // Log notification to check the changes
+
     db.get()
-      .collection(collections.NOTIFICATION_COLLECTION)
+      .collection(collections.NOTIFICATIONS_COLLECTION)
       .insertOne(notification)
       .then((data) => {
-        console.log(data);
-        callback(data.ops[0]._id);
+        console.log(data);  // Log the inserted data for debugging
+        callback(data.ops[0]._id);  // Return the _id of the inserted notification
+      })
+      .catch((err) => {
+        console.error("Error inserting notification:", err);
+        callback(null, err);  // Pass error back to callback
       });
   },
 
-  ///////GET ALL notification/////////////////////                                            
-  getAllnotifications: () => {
+  ///////GET ALL notification/////////////////////   
+
+  getAllnotifications: (builderId) => {
     return new Promise(async (resolve, reject) => {
-      let notifications = await db
-        .get()
-        .collection(collections.NOTIFICATION_COLLECTION)
-        .find()
-        .toArray();
-      resolve(notifications);
+      try {
+        // Fetch notifications by builderId and populate user details
+        let notifications = await db
+          .get()
+          .collection(collections.NOTIFICATIONS_COLLECTION)
+          .aggregate([
+            // Match notifications by builderId
+            {
+              $match: { "builderId": objectId(builderId) }
+            },
+            // Lookup user details based on userId
+            {
+              $lookup: {
+                from: collections.USERS_COLLECTION, // Assuming your users collection is named 'USERS_COLLECTION'
+                localField: "userId", // Field in notifications collection
+                foreignField: "_id", // Field in users collection
+                as: "userDetails" // Name of the array where the user details will be stored
+              }
+            },
+            // Unwind the userDetails array to get a single document (since $lookup returns an array)
+            {
+              $unwind: { path: "$userDetails", preserveNullAndEmptyArrays: true }
+            }
+          ])
+          .toArray();
+
+        resolve(notifications);
+      } catch (error) {
+        reject(error);
+      }
     });
   },
+
 
   ///////ADD notification DETAILS/////////////////////                                            
   getnotificationDetails: (notificationId) => {

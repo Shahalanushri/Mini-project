@@ -13,6 +13,23 @@ var instance = new Razorpay({
 
 module.exports = {
 
+  getnotificationById: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Fetch notifications based on userId (converted to ObjectId)
+        const notifications = await db.get()
+          .collection(collections.NOTIFICATIONS_COLLECTION)
+          .find({ userId: ObjectId(userId) }) // Filter by logged-in userId
+          .toArray();
+
+        resolve(notifications);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
+
   addFeedback: (feedback) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -129,38 +146,66 @@ module.exports = {
 
   doSignup: (userData) => {
     return new Promise(async (resolve, reject) => {
-      userData.Password = await bcrypt.hash(userData.Password, 10);
-      db.get()
-        .collection(collections.USERS_COLLECTION)
-        .insertOne(userData)
-        .then((data) => {
-          resolve(data.ops[0]);
-        });
+      try {
+        // Hash the password
+        userData.Password = await bcrypt.hash(userData.Password, 10);
+
+        // Set default values
+        userData.isDisable = false;  // User is not disabled by default
+        userData.createdAt = new Date();  // Set createdAt to the current date and time
+
+        // Insert the user into the database
+        db.get()
+          .collection(collections.USERS_COLLECTION)
+          .insertOne(userData)
+          .then((data) => {
+            // Resolve with the inserted user data
+            resolve(data.ops[0]);
+          })
+          .catch((err) => {
+            // Reject with any error during insertion
+            reject(err);
+          });
+      } catch (err) {
+        reject(err);  // Reject in case of any error during password hashing
+      }
     });
   },
 
   doSignin: (userData) => {
     return new Promise(async (resolve, reject) => {
       let response = {};
+
+      // Find user by email
       let user = await db
         .get()
         .collection(collections.USERS_COLLECTION)
         .findOne({ Email: userData.Email });
+
+      // If user exists, check if the account is disabled
       if (user) {
+        if (user.isDisable) {
+          // If the account is disabled, return the msg from the user collection
+          response.status = false;
+          response.msg = user.msg || "Your account has been disabled.";
+          return resolve(response);
+        }
+
+        // Compare passwords
         bcrypt.compare(userData.Password, user.Password).then((status) => {
           if (status) {
             console.log("Login Success");
             response.user = user;
             response.status = true;
-            resolve(response);
+            resolve(response);  // Successful login
           } else {
             console.log("Login Failed");
-            resolve({ status: false });
+            resolve({ status: false });  // Invalid password
           }
         });
       } else {
         console.log("Login Failed");
-        resolve({ status: false });
+        resolve({ status: false });  // User not found
       }
     });
   },

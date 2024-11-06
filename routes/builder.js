@@ -2,6 +2,8 @@ var express = require("express");
 var builderHelper = require("../helper/builderHelper");
 var fs = require("fs");
 const userHelper = require("../helper/userHelper");
+const adminHelper = require("../helper/adminHelper");
+
 var router = express.Router();
 var db = require("../config/connection");
 var collections = require("../config/collections");
@@ -24,11 +26,16 @@ router.get("/", verifySignedIn, function (req, res, next) {
 
 
 ///////ALL notification/////////////////////                                         
-router.get("/all-notifications", verifySignedIn, function (req, res) {
+router.get("/all-notifications", verifySignedIn, async function (req, res) {
   let builder = req.session.builder;
-  builderHelper.getAllnotifications().then((notifications) => {
-    res.render("builder/all-notifications", { builder: true, layout: "layout", notifications, builder });
-  });
+
+  // Ensure you have the builder's ID available
+  let builderId = builder._id; // Adjust based on how builder ID is stored in session
+
+  // Pass builderId to getAllOrders
+  let orders = await builderHelper.getAllOrders(builderId);
+  let notifications = await builderHelper.getAllnotifications(builderId)
+  res.render("builder/all-notifications", { builder: true, layout: "layout", notifications, builder, orders });
 });
 
 ///////ADD notification/////////////////////                                         
@@ -40,6 +47,13 @@ router.get("/add-notification", verifySignedIn, function (req, res) {
 ///////ADD notification/////////////////////                                         
 router.post("/add-notification", function (req, res) {
   builderHelper.addnotification(req.body, (id) => {
+    res.redirect("/builder/all-notifications");
+  });
+});
+
+router.get("/delete-notification/:id", verifySignedIn, function (req, res) {
+  let notificationId = req.params.id;
+  adminHelper.deletenotification(notificationId).then((response) => {
     res.redirect("/builder/all-notifications");
   });
 });
