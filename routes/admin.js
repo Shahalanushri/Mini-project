@@ -271,18 +271,26 @@ router.get("/all-users", verifySignedIn, function (req, res) {
   });
 });
 
-router.get("/block-user/:id", verifySignedIn, function (req, res) {
-  let userId = req.params.id;
-  console.log("Blocking user with ID:", userId); // Log the userId for debugging
+router.post("/block-user/:id", (req, res) => {
+  const userId = req.params.id;
+  const { reason } = req.body;
 
-  // Call the helper function to set the user's isDisable field to true
-  adminHelper.blockUser(userId).then(() => {
-    res.redirect("/admin/all-users");
-  }).catch((err) => {
-    console.log(err);
-    res.redirect("/admin/all-users");
-  });
+  // Update the user in the database to set isDisable to true and add the reason
+  db.get()
+    .collection(collections.USERS_COLLECTION)
+    .updateOne(
+      { _id: new ObjectId(userId) },
+      { $set: { isDisable: true, blockReason: reason } }
+    )
+    .then(() => res.json({ success: true }))
+    .catch(err => {
+      console.error('Error blocking user:', err);
+      res.json({ success: false });
+    });
 });
+
+
+
 router.get("/remove-all-users", verifySignedIn, function (req, res) {
   adminHelper.removeAllUsers().then(() => {
     res.redirect("/admin/all-users");
