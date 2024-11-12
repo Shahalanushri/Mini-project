@@ -426,6 +426,7 @@ module.exports = {
           .get()
           .collection(collections.ORDER_COLLECTION)
           .find({ "builderId": objectId(builderId) }) // Filter by builder ID
+          .sort({ date: -1 })  // Sort by createdAt in descending order
           .toArray();
         resolve(orders);
       } catch (error) {

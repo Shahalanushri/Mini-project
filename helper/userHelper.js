@@ -405,6 +405,7 @@ module.exports = {
           .get()
           .collection(collections.ORDER_COLLECTION)
           .find({ userId: ObjectId(userId) }) // Use 'userId' directly, not inside 'orderObject'
+          .sort({ date: -1 })  // Sort by createdAt in descending order
           .toArray();
 
         resolve(orders);
